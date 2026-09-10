@@ -37,6 +37,39 @@ el operario reintroduce el mismo material en cada linea.
 - Pieza incompleta: se avisa y se expande la primera pieza incompleta al guardar.
 - Pedido con un solo material: un grupo; con varios materiales: varios grupos.
 
+## 2.1 Lista vs tarjetas de material en movil
+
+**Pregunta:** en movil, ¿conviene una lista plana de materiales o tarjetas?
+
+**Analisis:**
+
+- **Lista plana** (cada material como una fila):
+  - ventaja: ocupa menos altura por fila y se puede mostrar mas de un material a la vez;
+  - desventaja: al desplegar un material, sus piezas compiten visualmente con los demas
+    materiales; es dificil saber a que material pertenece cada pieza; los objetivos tactiles
+    quedan mas juntos.
+- **Tarjetas** (cada material como bloque con su contenido):
+  - ventaja: la jerarquia material -> piezas es evidente; el bloque abierto queda aislado
+    y sin ambiguedad; permite encabezados grandes y objetivos tactiles amplios; el resumen
+    (material, piezas, area) se lee de un vistazo;
+  - desventaja: cada tarjeta ocupa algo mas de altura; con muchos materiales colapsados
+    el encabezado debe ser compacto para no generar scroll.
+
+**Decision:** usar **tarjetas para los materiales** y **lista compacta de piezas dentro**
+de cada tarjeta. Es el mejor equilibrio en movil:
+
+- solo una tarjeta de material abierta a la vez (acordeon);
+- dentro, las piezas son filas compactas y solo una pieza expandida a la vez;
+- encabezado de material compacto con resumen, para que muchos materiales no generen
+  scroll infinito;
+- acciones grandes y visibles: "Agregar pieza" (CTA destacado) y "Agregar material".
+
+Complementos para evitar scroll:
+
+- **"Datos del pedido" tambien es colapsable** (se mantiene en el DOM para no perder valores).
+- El resumen general (materiales, piezas, area) siempre visible en la cabecera.
+
+
 ## 3. Entrada de medidas en movil (ancho / alto)
 
 **Problema:** escribir medidas en el teclado movil es lento y propenso a errores.

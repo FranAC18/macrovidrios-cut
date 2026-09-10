@@ -60,6 +60,9 @@ export function OrderForm({
   const [groups, setGroups] = useState<MaterialGroup[]>(() => [emptyGroup()]);
   const [openGroup, setOpenGroup] = useState<number | null>(() => groups[0]?.key ?? null);
   const [openPiece, setOpenPiece] = useState<number | null>(() => groups[0]?.pieces[0]?.key ?? null);
+  const [openData, setOpenData] = useState(true);
+  const [customerId, setCustomerId] = useState("");
+  const [reference, setReference] = useState("");
   const [clientError, setClientError] = useState<string | null>(null);
 
   const productName = (id: string) => products.find((product) => product.id === id)?.name ?? "Sin material";
@@ -208,13 +211,34 @@ export function OrderForm({
       />
 
       <Card>
-        <CardHeader>
-          <CardTitle>Datos del pedido</CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-2">
+        <button
+          type="button"
+          onClick={() => setOpenData((value) => !value)}
+          aria-expanded={openData}
+          className="flex w-full items-center justify-between gap-2 p-5 text-left sm:p-6"
+        >
+          <span className="min-w-0">
+            <span className="block font-display text-base font-bold tracking-tight sm:text-lg">
+              Datos del pedido
+            </span>
+            <span className="mt-1 block truncate text-sm text-muted-foreground">
+              {customers.find((customer) => customer.id === customerId)?.full_name ?? "Sin cliente"}
+              {reference ? ` · ${reference}` : ""}
+            </span>
+          </span>
+          <ChevronDown
+            className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform", openData && "rotate-180")}
+          />
+        </button>
+        <CardContent className={cn("grid gap-4 sm:grid-cols-2", !openData && "hidden")}>
           <div className="space-y-2">
             <Label htmlFor="customer_id">Cliente</Label>
-            <Select id="customer_id" name="customer_id" defaultValue="">
+            <Select
+              id="customer_id"
+              name="customer_id"
+              value={customerId}
+              onChange={(event) => setCustomerId(event.target.value)}
+            >
               <option value="">Sin cliente</option>
               {customers.map((customer) => (
                 <option key={customer.id} value={customer.id}>
@@ -225,7 +249,13 @@ export function OrderForm({
           </div>
           <div className="space-y-2">
             <Label htmlFor="reference">Referencia</Label>
-            <Input id="reference" name="reference" placeholder="Obra, proyecto o nota corta" />
+            <Input
+              id="reference"
+              name="reference"
+              value={reference}
+              onChange={(event) => setReference(event.target.value)}
+              placeholder="Obra, proyecto o nota corta"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="due_at">Fecha compromiso</Label>
@@ -452,12 +482,11 @@ export function OrderForm({
 
                       <Button
                         type="button"
-                        variant="ghost"
-                        size="sm"
+                        variant="outline"
                         onClick={() => addPiece(group.key)}
-                        className="w-full justify-start"
+                        className="h-12 w-full justify-center gap-2 border-2 border-dashed border-primary/40 bg-accent/30 text-sm font-semibold text-primary hover:border-primary hover:bg-accent"
                       >
-                        <Plus className="h-4 w-4" />
+                        <Plus className="h-5 w-5" />
                         Agregar pieza en este material
                       </Button>
                     </div>
