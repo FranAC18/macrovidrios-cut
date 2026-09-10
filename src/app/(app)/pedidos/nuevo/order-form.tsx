@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, ChevronDown, Layers, Pencil, Plus, Trash2 } from "lucide-react";
+import { AlertTriangle, ChevronDown, Layers, Plus, Trash2 } from "lucide-react";
 import { createOrderAction, type OrderActionState } from "@/actions/orders";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -58,13 +58,17 @@ export function OrderForm({
   const [state, formAction, pending] = useActionState(createOrderAction, initialState);
   const router = useRouter();
   const [groups, setGroups] = useState<MaterialGroup[]>(() => [emptyGroup()]);
-  const [expanded, setExpanded] = useState<{ group: number; piece: number } | null>(() => {
-    const group = groups[0];
-    return group ? { group: group.key, piece: group.pieces[0].key } : null;
-  });
+  const [openGroup, setOpenGroup] = useState<number | null>(() => groups[0]?.key ?? null);
+  const [openPiece, setOpenPiece] = useState<number | null>(() => groups[0]?.pieces[0]?.key ?? null);
   const [clientError, setClientError] = useState<string | null>(null);
 
   const productName = (id: string) => products.find((product) => product.id === id)?.name ?? "Sin material";
+
+  const groupArea = (group: MaterialGroup) =>
+    group.pieces.reduce(
+      (sum, piece) => sum + ((piece.width_mm || 0) * (piece.height_mm || 0) * (piece.quantity || 0)) / 10_000,
+      0,
+    );
 
   useEffect(() => {
     if (state.ok && state.orderId) {
@@ -89,10 +93,22 @@ export function OrderForm({
     );
   };
 
+  const toggleGroup = (group: MaterialGroup) => {
+    if (openGroup === group.key) {
+      setOpenGroup(null);
+      setOpenPiece(null);
+      return;
+    }
+    const firstIncomplete = group.pieces.find((piece) => !isPieceComplete(piece));
+    setOpenGroup(group.key);
+    setOpenPiece(firstIncomplete?.key ?? null);
+  };
+
   const addGroup = () => {
     const group = emptyGroup();
     setGroups((current) => [...current, group]);
-    setExpanded({ group: group.key, piece: group.pieces[0].key });
+    setOpenGroup(group.key);
+    setOpenPiece(group.pieces[0].key);
     setClientError(null);
     scrollTo(`group-${group.key}`);
   };
@@ -102,10 +118,15 @@ export function OrderForm({
     if (next.length === 0) {
       const group = emptyGroup();
       setGroups([group]);
-      setExpanded({ group: group.key, piece: group.pieces[0].key });
+      setOpenGroup(group.key);
+      setOpenPiece(group.pieces[0].key);
       return;
     }
     setGroups(next);
+    if (openGroup === key) {
+      setOpenGroup(next[next.length - 1].key);
+      setOpenPiece(null);
+    }
   };
 
   const addPiece = (groupKey: number) => {
@@ -113,7 +134,8 @@ export function OrderForm({
     setGroups((current) =>
       current.map((group) => (group.key === groupKey ? { ...group, pieces: [...group.pieces, piece] } : group)),
     );
-    setExpanded({ group: groupKey, piece: piece.key });
+    setOpenGroup(groupKey);
+    setOpenPiece(piece.key);
     setClientError(null);
     scrollTo(`piece-${groupKey}-${piece.key}`);
   };
@@ -125,12 +147,10 @@ export function OrderForm({
         const pieces = group.pieces.filter((piece) => piece.key !== pieceKey);
         if (pieces.length === 0) {
           const piece = emptyPiece();
-          setExpanded({ group: groupKey, piece: piece.key });
+          setOpenPiece(piece.key);
           return { ...group, pieces: [piece] };
         }
-        if (expanded?.group === groupKey && expanded?.piece === pieceKey) {
-          setExpanded({ group: groupKey, piece: pieces[pieces.length - 1].key });
-        }
+        if (openPiece === pieceKey) setOpenPiece(pieces[pieces.length - 1].key);
         return { ...group, pieces };
       }),
     );
@@ -140,6 +160,7 @@ export function OrderForm({
     const groupWithoutMaterial = groups.find((group) => !group.glass_product_id);
     if (groupWithoutMaterial) {
       event.preventDefault();
+      setOpenGroup(groupWithoutMaterial.key);
       setClientError("Elige el color y espesor de cada material antes de guardar.");
       scrollTo(`group-${groupWithoutMaterial.key}`);
       return;
@@ -148,7 +169,8 @@ export function OrderForm({
       const incomplete = group.pieces.find((piece) => !isPieceComplete(piece));
       if (incomplete) {
         event.preventDefault();
-        setExpanded({ group: group.key, piece: incomplete.key });
+        setOpenGroup(group.key);
+        setOpenPiece(incomplete.key);
         setClientError("Completa ancho, alto y cantidad de todas las piezas antes de guardar.");
         scrollTo(`piece-${group.key}-${incomplete.key}`);
         return;
@@ -234,183 +256,226 @@ export function OrderForm({
             Agregar material
           </Button>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {groups.map((group, groupIndex) => (
-            <div
-              key={group.key}
-              id={`group-${group.key}`}
-              className="rounded-xl border border-border bg-muted/30 p-3"
-            >
-              <div className="mb-3 flex items-start justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">
-                    {groupIndex + 1}
-                  </span>
-                  <span className="text-sm font-semibold">
-                    {group.glass_product_id ? productName(group.glass_product_id) : `Material ${groupIndex + 1}`}
-                  </span>
-                </div>
-                {groups.length > 1 ? (
-                  <Button
+        <CardContent className="space-y-3">
+          {groups.map((group, groupIndex) => {
+            const materialOpen = openGroup === group.key;
+            const hasMaterial = Boolean(group.glass_product_id);
+            const groupComplete = hasMaterial && group.pieces.every(isPieceComplete);
+            return (
+              <div
+                key={group.key}
+                id={`group-${group.key}`}
+                className={cn(
+                  "overflow-hidden rounded-xl border bg-card transition-colors",
+                  materialOpen ? "border-primary/50" : "border-border",
+                )}
+              >
+                <div className="flex items-center gap-2 px-3 py-3">
+                  <button
                     type="button"
-                    variant="ghost"
-                    size="icon"
-                    aria-label={`Eliminar material ${groupIndex + 1}`}
-                    onClick={() => removeGroup(group.key)}
+                    onClick={() => toggleGroup(group)}
+                    className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                    aria-expanded={materialOpen}
                   >
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                      {groupIndex + 1}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-semibold">
+                        {hasMaterial ? productName(group.glass_product_id) : "Elige el material"}
+                      </span>
+                      <span className="block truncate text-xs text-muted-foreground">
+                        {group.pieces.length} {group.pieces.length === 1 ? "pieza" : "piezas"} ·{" "}
+                        {groupArea(group).toFixed(2)} m²
+                      </span>
+                    </span>
+                    {!groupComplete ? (
+                      <AlertTriangle className="h-4 w-4 shrink-0 text-warning" aria-label="Incompleto" />
+                    ) : null}
+                    <ChevronDown
+                      className={cn(
+                        "h-4 w-4 shrink-0 text-muted-foreground transition-transform",
+                        materialOpen && "rotate-180",
+                      )}
+                    />
+                  </button>
+                  {groups.length > 1 ? (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      aria-label={`Eliminar material ${groupIndex + 1}`}
+                      onClick={() => removeGroup(group.key)}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  ) : null}
+                </div>
+
+                {materialOpen ? (
+                  <div className="animate-rise space-y-3 border-t border-border p-3">
+                    <div className="rounded-lg border border-border bg-card p-3">
+                      <MaterialSelect
+                        products={products}
+                        defaultValue={group.glass_product_id || undefined}
+                        onProductChange={(id) => updateGroup(group.key, { glass_product_id: id })}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      {group.pieces.map((piece, pieceIndex) => {
+                        const pieceOpen = openPiece === piece.key;
+                        const complete = isPieceComplete(piece);
+                        return (
+                          <div
+                            key={piece.key}
+                            id={`piece-${group.key}-${piece.key}`}
+                            className={cn(
+                              "overflow-hidden rounded-lg border bg-card transition-colors",
+                              pieceOpen ? "border-primary/40" : "border-border",
+                            )}
+                          >
+                            <div className="flex items-center gap-2 px-3 py-2">
+                              <button
+                                type="button"
+                                onClick={() => setOpenPiece(pieceOpen ? null : piece.key)}
+                                className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                                aria-expanded={pieceOpen}
+                              >
+                                <span className="text-xs font-bold text-muted-foreground">
+                                  Pieza {pieceIndex + 1}
+                                </span>
+                                <span className="min-w-0 flex-1 truncate text-sm font-medium">
+                                  {complete
+                                    ? `${trim(piece.width_mm)} × ${trim(piece.height_mm)} cm · ${piece.quantity} ${piece.quantity === 1 ? "unidad" : "unidades"}`
+                                    : "Sin medidas"}
+                                </span>
+                                {!complete ? (
+                                  <AlertTriangle className="h-4 w-4 shrink-0 text-warning" aria-label="Incompleta" />
+                                ) : null}
+                                <ChevronDown
+                                  className={cn(
+                                    "h-4 w-4 shrink-0 text-muted-foreground transition-transform",
+                                    pieceOpen && "rotate-180",
+                                  )}
+                                />
+                              </button>
+                              {group.pieces.length > 1 ? (
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon"
+                                  aria-label={`Eliminar pieza ${pieceIndex + 1}`}
+                                  onClick={() => removePiece(group.key, piece.key)}
+                                >
+                                  <Trash2 className="h-4 w-4 text-destructive" />
+                                </Button>
+                              ) : null}
+                            </div>
+
+                            {pieceOpen ? (
+                              <div className="animate-rise border-t border-border p-3">
+                                <div className="grid gap-3 sm:grid-cols-5">
+                                  <div className="space-y-1">
+                                    <Label htmlFor={`width-${group.key}-${piece.key}`}>Ancho (cm) *</Label>
+                                    <Input
+                                      id={`width-${group.key}-${piece.key}`}
+                                      type="number"
+                                      inputMode="decimal"
+                                      step="0.1"
+                                      value={piece.width_mm || ""}
+                                      onChange={(event) =>
+                                        updatePiece(group.key, piece.key, { width_mm: Number(event.target.value) })
+                                      }
+                                    />
+                                  </div>
+                                  <div className="space-y-1">
+                                    <Label htmlFor={`height-${group.key}-${piece.key}`}>Alto (cm) *</Label>
+                                    <Input
+                                      id={`height-${group.key}-${piece.key}`}
+                                      type="number"
+                                      inputMode="decimal"
+                                      step="0.1"
+                                      value={piece.height_mm || ""}
+                                      onChange={(event) =>
+                                        updatePiece(group.key, piece.key, { height_mm: Number(event.target.value) })
+                                      }
+                                    />
+                                  </div>
+                                  <div className="space-y-1">
+                                    <Label htmlFor={`qty-${group.key}-${piece.key}`}>Cantidad *</Label>
+                                    <Input
+                                      id={`qty-${group.key}-${piece.key}`}
+                                      type="number"
+                                      inputMode="numeric"
+                                      value={piece.quantity || ""}
+                                      onChange={(event) =>
+                                        updatePiece(group.key, piece.key, { quantity: Number(event.target.value) })
+                                      }
+                                    />
+                                  </div>
+                                  <div className="space-y-1 sm:col-span-2">
+                                    <Label htmlFor={`name-${group.key}-${piece.key}`}>Descripcion</Label>
+                                    <Input
+                                      id={`name-${group.key}-${piece.key}`}
+                                      value={piece.name}
+                                      onChange={(event) =>
+                                        updatePiece(group.key, piece.key, { name: event.target.value })
+                                      }
+                                      placeholder="Ventanal, repisa..."
+                                    />
+                                  </div>
+                                  <label className="flex items-center gap-2 text-sm sm:col-span-5">
+                                    <input
+                                      type="checkbox"
+                                      checked={piece.rotatable}
+                                      onChange={(event) =>
+                                        updatePiece(group.key, piece.key, { rotatable: event.target.checked })
+                                      }
+                                      className="h-4 w-4"
+                                    />
+                                    Se puede rotar
+                                  </label>
+                                </div>
+                                {complete ? (
+                                  <div className="mt-3 flex justify-end">
+                                    <Button type="button" variant="ghost" size="sm" onClick={() => setOpenPiece(null)}>
+                                      Listo
+                                    </Button>
+                                  </div>
+                                ) : null}
+                              </div>
+                            ) : null}
+                          </div>
+                        );
+                      })}
+
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => addPiece(group.key)}
+                        className="w-full justify-start"
+                      >
+                        <Plus className="h-4 w-4" />
+                        Agregar pieza en este material
+                      </Button>
+                    </div>
+
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => toggleGroup(group)}
+                      className="w-full"
+                    >
+                      Listo con este material
+                    </Button>
+                  </div>
                 ) : null}
               </div>
-
-              <div className="rounded-lg border border-border bg-card p-3">
-                <MaterialSelect
-                  products={products}
-                  defaultValue={group.glass_product_id || undefined}
-                  onProductChange={(id) => updateGroup(group.key, { glass_product_id: id })}
-                />
-              </div>
-
-              <div className="mt-3 space-y-2">
-                {group.pieces.map((piece, pieceIndex) => {
-                  const open = expanded?.group === group.key && expanded?.piece === piece.key;
-                  const complete = isPieceComplete(piece);
-                  return (
-                    <div
-                      key={piece.key}
-                      id={`piece-${group.key}-${piece.key}`}
-                      className={cn(
-                        "overflow-hidden rounded-lg border bg-card transition-colors",
-                        open ? "border-primary/40" : "border-border hover:border-primary/30",
-                      )}
-                    >
-                      <div className="flex items-center gap-2 px-3 py-2">
-                        <button
-                          type="button"
-                          onClick={() => setExpanded(open ? null : { group: group.key, piece: piece.key })}
-                          className="flex min-w-0 flex-1 items-center gap-3 text-left"
-                          aria-expanded={open}
-                        >
-                          <span className="text-xs font-bold text-muted-foreground">#{pieceIndex + 1}</span>
-                          <span className="min-w-0 flex-1 truncate text-sm font-medium">
-                            {complete
-                              ? `${trim(piece.width_mm)} × ${trim(piece.height_mm)} cm · ${piece.quantity} ${piece.quantity === 1 ? "unidad" : "unidades"}`
-                              : "Pieza sin completar"}
-                          </span>
-                          {!complete ? (
-                            <AlertTriangle className="h-4 w-4 shrink-0 text-warning" aria-label="Incompleta" />
-                          ) : null}
-                          <ChevronDown
-                            className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform", open && "rotate-180")}
-                          />
-                        </button>
-                        {group.pieces.length > 1 ? (
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            aria-label={`Eliminar pieza ${pieceIndex + 1}`}
-                            onClick={() => removePiece(group.key, piece.key)}
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        ) : null}
-                      </div>
-
-                      {open ? (
-                        <div className="animate-rise border-t border-border p-3">
-                          <div className="grid gap-3 sm:grid-cols-5">
-                            <div className="space-y-1">
-                              <Label htmlFor={`width-${group.key}-${piece.key}`}>Ancho (cm) *</Label>
-                              <Input
-                                id={`width-${group.key}-${piece.key}`}
-                                type="number"
-                                inputMode="decimal"
-                                step="0.1"
-                                value={piece.width_mm || ""}
-                                onChange={(event) =>
-                                  updatePiece(group.key, piece.key, { width_mm: Number(event.target.value) })
-                                }
-                              />
-                            </div>
-                            <div className="space-y-1">
-                              <Label htmlFor={`height-${group.key}-${piece.key}`}>Alto (cm) *</Label>
-                              <Input
-                                id={`height-${group.key}-${piece.key}`}
-                                type="number"
-                                inputMode="decimal"
-                                step="0.1"
-                                value={piece.height_mm || ""}
-                                onChange={(event) =>
-                                  updatePiece(group.key, piece.key, { height_mm: Number(event.target.value) })
-                                }
-                              />
-                            </div>
-                            <div className="space-y-1">
-                              <Label htmlFor={`qty-${group.key}-${piece.key}`}>Cantidad *</Label>
-                              <Input
-                                id={`qty-${group.key}-${piece.key}`}
-                                type="number"
-                                inputMode="numeric"
-                                value={piece.quantity || ""}
-                                onChange={(event) =>
-                                  updatePiece(group.key, piece.key, { quantity: Number(event.target.value) })
-                                }
-                              />
-                            </div>
-                            <div className="space-y-1 sm:col-span-2">
-                              <Label htmlFor={`name-${group.key}-${piece.key}`}>Descripcion</Label>
-                              <Input
-                                id={`name-${group.key}-${piece.key}`}
-                                value={piece.name}
-                                onChange={(event) => updatePiece(group.key, piece.key, { name: event.target.value })}
-                                placeholder="Ventanal, repisa..."
-                              />
-                            </div>
-                            <label className="flex items-center gap-2 text-sm sm:col-span-5">
-                              <input
-                                type="checkbox"
-                                checked={piece.rotatable}
-                                onChange={(event) =>
-                                  updatePiece(group.key, piece.key, { rotatable: event.target.checked })
-                                }
-                                className="h-4 w-4"
-                              />
-                              Se puede rotar
-                            </label>
-                          </div>
-                          {complete ? (
-                            <div className="mt-3 flex justify-end">
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setExpanded(null)}
-                              >
-                                <Pencil className="h-4 w-4" />
-                                Listo
-                              </Button>
-                            </div>
-                          ) : null}
-                        </div>
-                      ) : null}
-                    </div>
-                  );
-                })}
-
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => addPiece(group.key)}
-                  className="w-full justify-start"
-                >
-                  <Plus className="h-4 w-4" />
-                  Agregar pieza en este material
-                </Button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </CardContent>
       </Card>
 
