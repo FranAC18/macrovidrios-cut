@@ -7,6 +7,7 @@ import { createOrderAction, type OrderActionState } from "@/actions/orders";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FieldError, Input, Label, Select, Textarea } from "@/components/ui/input";
+import { MaterialSelect } from "@/components/forms/material-select";
 import type { ProductView } from "@/lib/data";
 import type { Customer } from "@/types/domain";
 
@@ -145,24 +146,12 @@ export function OrderForm({
                 ) : null}
               </div>
               <div className="grid gap-3 sm:grid-cols-5">
-                <div className="space-y-1 sm:col-span-2">
-                  <Label>Material *</Label>
-                  <Select
-                    value={row.glass_product_id}
-                    onChange={(event) => updateRow(row.key, { glass_product_id: event.target.value })}
-                    required
-                  >
-                    <option value="" disabled>
-                      Color y espesor
-                    </option>
-                    {products
-                      .filter((product) => product.active)
-                      .map((product) => (
-                        <option key={product.id} value={product.id}>
-                          {product.name}
-                        </option>
-                      ))}
-                  </Select>
+                <div className="sm:col-span-2">
+                  <MaterialSelect
+                    products={products}
+                    defaultValue={row.glass_product_id || undefined}
+                    onProductChange={(id) => updateRow(row.key, { glass_product_id: id })}
+                  />
                 </div>
                 <div className="space-y-1">
                   <Label>Ancho (cm) *</Label>

@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FieldError, Input, Label, Select } from "@/components/ui/input";
+import { MaterialSelect } from "@/components/forms/material-select";
 import type { ProductView } from "@/lib/data";
 import type { SheetType } from "@/types/domain";
 
@@ -83,20 +84,8 @@ export function InventorySheetForm({
       </CardHeader>
       <CardContent>
         <form ref={ref} action={formAction} className="grid gap-3 sm:grid-cols-2">
-          <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="is-product">Material *</Label>
-            <Select id="is-product" name="glass_product_id" required defaultValue="">
-              <option value="" disabled>
-                Selecciona color y espesor
-              </option>
-              {products
-                .filter((product) => product.active)
-                .map((product) => (
-                  <option key={product.id} value={product.id}>
-                    {product.name}
-                  </option>
-                ))}
-            </Select>
+          <div className="sm:col-span-2">
+            <MaterialSelect products={products} name="glass_product_id" required />
           </div>
           <div className="space-y-2 sm:col-span-2">
             <Label htmlFor="is-sheet">Formato *</Label>
