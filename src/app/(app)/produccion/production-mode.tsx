@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
 import { LayoutViewer, type LayoutPlacementView } from "@/components/cutting/layout-viewer";
-import { formatPercent } from "@/lib/format";
+import { formatCm, formatPercent } from "@/lib/format";
 
 export interface ProductionLayout {
   id: string;
@@ -211,7 +211,7 @@ export function ProductionMode({
             </p>
             <p className="text-3xl font-bold sm:text-4xl">{current.instruction}</p>
             {current.cut_length_mm ? (
-              <p className="text-sm text-muted-foreground">Longitud {current.cut_length_mm} mm</p>
+              <p className="text-sm text-muted-foreground">Longitud {formatCm(current.cut_length_mm)}</p>
             ) : null}
             <p className="text-xs text-muted-foreground">
               {currentLayout

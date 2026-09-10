@@ -4,24 +4,39 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 222 47% 11%;
+    /* MacroVidrios Cut · base de diseño Kobaia (minimal) */
+    /* Paleta: azul #0e376c · rojo #be1825 · gris #edeef4 */
+    --background: 231 24% 94%;
+    --foreground: 218 40% 12%;
+
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --primary: 199 89% 32%;
+    --card-foreground: 218 40% 12%;
+
+    --primary: 214 77% 24%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 199 89% 94%;
-    --accent-foreground: 199 89% 24%;
-    --destructive: 0 72% 45%;
+
+    --secondary: 231 24% 92%;
+    --secondary-foreground: 214 50% 20%;
+
+    --muted: 231 22% 93%;
+    --muted-foreground: 220 10% 42%;
+
+    --accent: 214 70% 95%;
+    --accent-foreground: 214 77% 24%;
+
+    --destructive: 355 78% 42%;
     --destructive-foreground: 0 0% 100%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 199 89% 32%;
-    --radius: 0.5rem;
+
+    --success: 145 62% 30%;
+    --success-soft: 145 45% 93%;
+    --warning: 32 91% 34%;
+    --warning-soft: 38 92% 92%;
+
+    --border: 231 24% 88%;
+    --input: 231 22% 85%;
+    --ring: 214 77% 24%;
+
+    --radius: 0.85rem;
   }
 
   * {
@@ -34,10 +49,51 @@
   }
 
   body {
-    @apply antialiased;
-    font-feature-settings:
-      "rlig" 1,
-      "calt" 1;
+    font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    min-height: 100dvh;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.16);
+  }
+}
+
+@layer components {
+  .panel {
+    @apply rounded-2xl border border-border bg-card;
+    box-shadow:
+      0 1px 3px rgba(16, 24, 40, 0.04),
+      0 6px 16px -2px rgba(16, 24, 40, 0.06);
+  }
+
+  .panel-elevated {
+    @apply rounded-2xl border border-border bg-card;
+    box-shadow:
+      0 4px 12px rgba(16, 24, 40, 0.06),
+      0 16px 36px -4px rgba(16, 24, 40, 0.08);
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-[11px] font-bold uppercase tracking-[0.06em] text-accent-foreground;
+  }
+
+  .hairline {
+    @apply border-border;
+  }
+
+  .code-chip {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    @apply rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-primary;
   }
 }
 
@@ -48,5 +104,29 @@
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  .animate-rise {
+    animation: rise 0.28s cubic-bezier(0.2, 1, 0.3, 1) both;
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
   }
 }

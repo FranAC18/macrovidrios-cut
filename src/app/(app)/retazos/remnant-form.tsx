@@ -43,12 +43,12 @@ export function RemnantForm({ products }: { products: ProductView[] }) {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="r-width">Ancho (mm) *</Label>
-            <Input id="r-width" name="width_mm" type="number" inputMode="numeric" required />
+            <Label htmlFor="r-width">Ancho (cm) *</Label>
+            <Input id="r-width" name="width_cm" type="number" step="0.1" inputMode="decimal" required />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="r-height">Alto (mm) *</Label>
-            <Input id="r-height" name="height_mm" type="number" inputMode="numeric" required />
+            <Label htmlFor="r-height">Alto (cm) *</Label>
+            <Input id="r-height" name="height_cm" type="number" step="0.1" inputMode="decimal" required />
           </div>
           <div className="space-y-2">
             <Label htmlFor="r-qty">Cantidad *</Label>

@@ -11,27 +11,32 @@ export default async function LoginPage() {
   if (user) redirect("/dashboard");
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-muted/40 px-4 py-10">
+    <div className="flex min-h-dvh items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
-        <div className="mb-6 flex flex-col items-center gap-2 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <Scissors className="h-6 w-6" />
+        <div className="mb-6 flex flex-col items-center gap-3 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-panel">
+            <Scissors className="h-7 w-7" />
           </div>
-          <h1 className="text-2xl font-bold">MacroVidrios Cut</h1>
-          <p className="text-sm text-muted-foreground">Corta mejor. Desperdicia menos.</p>
+          <span className="eyebrow">Corta mejor. Desperdicia menos.</span>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight">MacroVidrios Cut</h1>
+          <p className="text-sm text-muted-foreground">
+            Gestiona pedidos, cuadra el vidrio y controla el taller.
+          </p>
         </div>
-        <Card>
+        <Card className="panel-elevated">
           <CardHeader>
             <CardTitle>Ingresar</CardTitle>
             <CardDescription>Usa una cuenta del taller para continuar.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <LoginForm />
-            <div className="rounded-md bg-muted p-3 text-xs text-muted-foreground">
-              <p className="font-medium text-foreground">Cuentas de demostracion</p>
-              <p>admin@macrovidrios.com · supervisor@macrovidrios.com</p>
-              <p>vendedor@macrovidrios.com · cortador@macrovidrios.com</p>
-              <p className="mt-1">Contrasena: macrovidrios</p>
+            <div className="rounded-xl bg-muted p-3 text-xs text-muted-foreground">
+              <p className="font-semibold text-foreground">Cuentas de demostracion</p>
+              <p className="mt-1 font-mono">admin@macrovidrios.com · supervisor@macrovidrios.com</p>
+              <p className="font-mono">vendedor@macrovidrios.com · cortador@macrovidrios.com</p>
+              <p className="mt-1">
+                Contrasena: <span className="code-chip">macrovidrios</span>
+              </p>
             </div>
           </CardContent>
         </Card>

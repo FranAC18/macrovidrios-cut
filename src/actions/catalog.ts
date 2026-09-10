@@ -89,8 +89,8 @@ export async function createSheetTypeAction(
   const user = await requirePermission("catalog.manage");
   const parsed = sheetTypeSchema.safeParse({
     name: formData.get("name"),
-    width_mm: formData.get("width_mm"),
-    height_mm: formData.get("height_mm"),
+    width_mm: Math.round(Number(formData.get("width_cm") || 0) * 10),
+    height_mm: Math.round(Number(formData.get("height_cm") || 0) * 10),
     default_cost_cents: Math.round(Number(formData.get("default_cost") || 0) * 100),
     active: true,
   });

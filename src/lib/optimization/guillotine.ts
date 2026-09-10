@@ -9,7 +9,9 @@ export interface GuillotineOutput {
 function describeCut(node: TreeNode): string {
   const axisLabel = node.split_axis === "x" ? "vertical" : "horizontal";
   const position = node.split_position ?? 0;
-  return `Cortar ${axisLabel} a ${position} mm`;
+  const cm = Math.round((position / 10) * 10) / 10;
+  const value = Number.isInteger(cm) ? String(cm) : cm.toFixed(1);
+  return `Cortar ${axisLabel} a ${value} cm`;
 }
 
 function areaTypeOf(node: TreeNode, isRoot: boolean): CuttingArea["area_type"] {

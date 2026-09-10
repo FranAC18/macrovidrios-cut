@@ -44,7 +44,7 @@ export default async function RemnantsPage({
 
       <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
         <div className="space-y-4">
-          <form className="grid gap-3 rounded-lg border border-border bg-card p-4 sm:grid-cols-4">
+          <form className="grid gap-3 panel p-4 sm:grid-cols-4">
             <div className="space-y-1 sm:col-span-2">
               <Label htmlFor="product">Material</Label>
               <Select id="product" name="product" defaultValue={params.product ?? ""}>
@@ -90,7 +90,7 @@ export default async function RemnantsPage({
           ) : (
             <div className="grid gap-3 sm:grid-cols-2">
               {remnants.map((remnant) => (
-                <div key={remnant.id} className="rounded-lg border border-border bg-card p-4">
+                <div key={remnant.id} className="panel p-4">
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="font-semibold">{remnant.product_name}</p>

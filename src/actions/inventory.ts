@@ -18,8 +18,8 @@ export async function createRemnantAction(
   const user = await requirePermission("inventory.manage");
   const parsed = remnantSchema.safeParse({
     glass_product_id: formData.get("glass_product_id"),
-    width_mm: formData.get("width_mm"),
-    height_mm: formData.get("height_mm"),
+    width_mm: Math.round(Number(formData.get("width_cm") || 0) * 10),
+    height_mm: Math.round(Number(formData.get("height_cm") || 0) * 10),
     quantity: formData.get("quantity"),
     location: formData.get("location") || undefined,
     notes: formData.get("notes") || undefined,

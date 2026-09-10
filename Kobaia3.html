@@ -1,0 +1,1267 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kobaia QR · Sistema de Diseño Apple Minimal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    /* ── PALETA & FONDOS (Modo Claro - Minimal) ────────────────────── */
+    --bg-base: #f5f5f7;
+    --text-main: #1d1d1f;
+    --text-muted: #515154;
+    --text-soft: #86868b;
+    --text-inverse: #ffffff;
+
+    /* Superficies Sólidas Minimalistas */
+    --panel-bg: #ffffff;
+    --panel-bg-subtle: #fbfbfd;
+    --panel-bg-elevated: #ffffff;
+    --panel-border: rgba(0, 0, 0, 0.08);
+    --panel-border-subtle: rgba(0, 0, 0, 0.04);
+    
+    /* Sombras Naturales y Sutiles */
+    --panel-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 6px 16px -2px rgba(0, 0, 0, 0.04);
+    --panel-shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.05), 0 16px 36px -4px rgba(0, 0, 0, 0.07);
+
+    /* Píldora Deslizante Minimal */
+    --slide-track-bg: #e8e8ed;
+    --slide-pill-bg: #ffffff;
+    --slide-pill-shadow: 0 2px 6px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+
+    /* Botón Oscuro Apple */
+    --btn-dark-bg: #1d1d1f;
+    --btn-dark-hover: #313136;
+    --btn-dark-text: #ffffff;
+
+    /* Acento y Semántica */
+    --accent: #0071e3;
+    --accent-hover: #0077ed;
+    --accent-active: #0066cc;
+    --accent-soft: rgba(0, 113, 227, 0.08);
+    --accent-ring: rgba(0, 113, 227, 0.25);
+
+    --error: #d93025;
+    --error-soft: rgba(217, 48, 37, 0.08);
+    --success: #1e8e3e;
+    --success-soft: rgba(30, 142, 62, 0.08);
+    --warn: #b06000;
+    --warn-soft: rgba(176, 96, 0, 0.08);
+
+    --card-catalog-bg: #ffffff;
+    --input-bg: #ffffff;
+    --input-border: #d2d2d7;
+    --code-bg: #f5f5f7;
+    --badge-neutral-bg: #e8e8ed;
+    --badge-neutral-text: #515154;
+  }
+
+  [data-theme="dark"] {
+    /* ── PALETA & FONDOS (Modo Oscuro - Minimal) ──────────────────── */
+    --bg-base: #000000;
+    --text-main: #f5f5f7;
+    --text-muted: #a1a1a6;
+    --text-soft: #6e6e73;
+    --text-inverse: #000000;
+
+    /* Superficies Sólidas Dark */
+    --panel-bg: #161618;
+    --panel-bg-subtle: #1c1c1e;
+    --panel-bg-elevated: #242426;
+    --panel-border: rgba(255, 255, 255, 0.12);
+    --panel-border-subtle: rgba(255, 255, 255, 0.06);
+
+    --panel-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    --panel-shadow-elevated: 0 10px 28px rgba(0, 0, 0, 0.6);
+
+    --slide-track-bg: #242426;
+    --slide-pill-bg: #323236;
+    --slide-pill-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+
+    --btn-dark-bg: #f5f5f7;
+    --btn-dark-hover: #ffffff;
+    --btn-dark-text: #000000;
+
+    --accent: #2997ff;
+    --accent-hover: #4aa7ff;
+    --accent-active: #0071e3;
+    --accent-soft: rgba(41, 151, 255, 0.14);
+    --accent-ring: rgba(41, 151, 255, 0.35);
+
+    --error: #ff453a;
+    --error-soft: rgba(255, 69, 58, 0.14);
+    --success: #30d158;
+    --success-soft: rgba(48, 209, 88, 0.14);
+    --warn: #ffd60a;
+    --warn-soft: rgba(255, 214, 10, 0.14);
+
+    --card-catalog-bg: #161618;
+    --input-bg: #161618;
+    --input-border: #38383a;
+    --code-bg: #1c1c1e;
+    --badge-neutral-bg: #242426;
+    --badge-neutral-text: #d2d2d7;
+  }
+
+  /* ── CONSTANTES GLOBALES ────────────────────────────────────────── */
+  :root {
+    --r-xs: 6px;
+    --r-sm: 10px;
+    --r-md: 14px;
+    --r-lg: 20px;
+    --r-pill: 9999px;
+    --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+    --focus-ring: 0 0 0 3px var(--accent-ring);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--text-main);
+    background-color: var(--bg-base);
+    line-height: 1.47059;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    padding-bottom: 140px;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 104px 24px 0; position: relative; z-index: 1; }
+
+  /* ── 01 · NAVBAR FLOTANTE MINIMALISTA ──────────────────────────── */
+  .nav-wrapper {
+    position: fixed; top: 18px; left: 0; right: 0;
+    z-index: 100; display: flex; justify-content: center;
+    padding: 0 20px; pointer-events: none;
+  }
+
+  .navbar {
+    pointer-events: auto;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; width: 100%; max-width: 1040px; height: 56px;
+    padding: 6px 8px 6px 18px;
+    border-radius: var(--r-pill);
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    box-shadow: var(--panel-shadow);
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+  }
+
+  .nav-brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: "Plus Jakarta Sans", var(--font-display);
+    font-weight: 800; font-size: 15px; letter-spacing: -0.02em;
+    color: var(--text-main); text-decoration: none;
+  }
+  .brand-logo-badge {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: var(--btn-dark-bg); color: var(--btn-dark-text);
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Segmented Contenedor con Píldora Deslizante */
+  .slide-container {
+    position: relative;
+    display: inline-flex; align-items: center; gap: 2px;
+    background: var(--slide-track-bg);
+    padding: 3px; border-radius: var(--r-pill);
+    transition: background-color 0.25s ease;
+  }
+
+  .sliding-pill {
+    position: absolute; top: 3px; bottom: 3px; left: 0;
+    border-radius: var(--r-pill);
+    background: var(--slide-pill-bg);
+    box-shadow: var(--slide-pill-shadow);
+    pointer-events: none;
+    z-index: 1;
+    transition: transform 0.28s cubic-bezier(0.2, 1, 0.3, 1),
+                width 0.28s cubic-bezier(0.2, 1, 0.3, 1),
+                background-color 0.25s ease;
+  }
+
+  .nav-link-btn {
+    position: relative; z-index: 2;
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 6px 14px; border-radius: var(--r-pill);
+    border: none; background: transparent;
+    font-size: 13px; font-weight: 500;
+    color: var(--text-muted); cursor: pointer;
+    text-decoration: none;
+    transition: color 0.18s ease;
+    white-space: nowrap;
+  }
+  .nav-link-btn:hover { color: var(--accent); }
+  .nav-link-btn.active { color: var(--text-main); font-weight: 600; }
+
+  .nav-actions { display: flex; align-items: center; gap: 10px; }
+
+  .btn-download-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    height: 38px; padding: 0 16px; border-radius: var(--r-pill);
+    background: var(--btn-dark-bg); color: var(--btn-dark-text);
+    font-size: 13px; font-weight: 600; text-decoration: none;
+    border: none; cursor: pointer;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+  .btn-download-pill:hover { opacity: 0.88; transform: translateY(-0.5px); }
+  .btn-download-pill:active { transform: scale(0.97); }
+
+  .status-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #22c55e;
+  }
+
+  /* ── MENÚ DESPLEGABLE MINIMAL ──────────────────────────────────── */
+  .nav-dropdown-host { position: relative; display: flex; }
+
+  .nav-dropdown-host .dropdown-caret {
+    display: inline-flex; align-items: center; margin-left: 3px;
+    font-size: 10px; opacity: 0.7; transition: transform 0.18s ease;
+  }
+  .nav-dropdown-host:hover .dropdown-caret,
+  .nav-dropdown-host:focus-within .dropdown-caret {
+    transform: translateY(1px); color: var(--accent);
+  }
+
+  .nav-dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    z-index: 60;
+    min-width: 260px;
+    margin: 0;
+    padding: 8px;
+    list-style: none;
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--r-md);
+    box-shadow: var(--panel-shadow-elevated);
+    opacity: 0; visibility: hidden; transform: translateY(-4px);
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+    font-size: 13px;
+  }
+  .nav-dropdown::before {
+    content: ""; position: absolute;
+    top: -12px; left: 0; right: 0; height: 12px;
+  }
+  .nav-dropdown-host:hover .nav-dropdown,
+  .nav-dropdown-host:focus-within .nav-dropdown,
+  .nav-dropdown-host.is-open .nav-dropdown {
+    opacity: 1; visibility: visible; transform: translateY(0);
+  }
+  .nav-dropdown a {
+    display: flex; flex-direction: column; gap: 2px;
+    padding: 8px 10px; border-radius: var(--r-sm);
+    color: var(--text-main); text-decoration: none;
+    transition: background-color 0.15s ease;
+  }
+  .nav-dropdown a:hover { background: var(--panel-bg-subtle); color: var(--accent); }
+  .nav-dropdown .dropdown-name { font-weight: 600; }
+  .nav-dropdown .dropdown-blurb { font-size: 12px; color: var(--text-soft); }
+
+  /* ── HEADER HERO ───────────────────────────────────────────────── */
+  header.hero {
+    padding: 36px 0 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .top-bar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .eyebrow {
+    font-size: 11.5px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--accent);
+    padding: 4px 12px; border-radius: var(--r-pill);
+    background: var(--accent-soft);
+  }
+
+  .theme-toggle-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: var(--r-pill);
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    color: var(--text-main); font-size: 13px; font-weight: 600;
+    cursor: pointer; box-shadow: var(--panel-shadow);
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.18s ease;
+  }
+  .theme-toggle-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-0.5px);
+  }
+  .theme-toggle-btn:active { transform: scale(0.97); }
+
+  h1 {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: clamp(32px, 5vw, 48px); line-height: 1.1;
+    letter-spacing: -0.03em; margin-bottom: 14px;
+    color: var(--text-main);
+  }
+  .lede { font-size: 16.5px; color: var(--text-muted); max-width: 65ch; line-height: 1.55; }
+  .lede strong { color: var(--text-main); font-weight: 600; }
+
+  /* ── PANELES SÓLIDOS MINIMALISTAS ──────────────────────────────── */
+  section { padding: 32px 0 8px; }
+  h2 {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 20px; letter-spacing: -0.015em; margin-bottom: 6px;
+    color: var(--text-main);
+  }
+  .sec-desc { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; max-width: 65ch; }
+
+  .glass {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--panel-shadow);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .glass.elevated {
+    background: var(--panel-bg-elevated);
+    box-shadow: var(--panel-shadow-elevated);
+  }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  @media (max-width: 780px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+
+  .card { padding: 24px; }
+  .card h3 { font-family: var(--font-display); font-weight: 700; font-size: 15.5px; margin-bottom: 8px; color: var(--text-main); }
+  .card p { color: var(--text-muted); font-size: 14px; line-height: 1.55; }
+
+  .code {
+    font-family: var(--font-mono); font-size: 12px; color: var(--accent);
+    background: var(--code-bg);
+    border: 1px solid var(--panel-border-subtle);
+    border-radius: var(--r-sm); padding: 12px; line-height: 1.6;
+    overflow-x: auto; white-space: pre; margin-top: 14px;
+  }
+
+  /* ── SWATCHES DE COLOR ─────────────────────────────────────────── */
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+  .swatch {
+    border-radius: var(--r-md); overflow: hidden;
+    border: 1px solid var(--panel-border);
+    background: var(--panel-bg-subtle);
+  }
+  .swatch .chip { height: 68px; }
+  .swatch .label { padding: 8px 10px; font-size: 12px; font-weight: 600; color: var(--text-main); }
+  .swatch .label span { display: block; font-family: var(--font-mono); font-size: 11px; font-weight: 400; color: var(--text-soft); margin-top: 2px; }
+
+  /* ── TIPOGRAFÍA DEMO ───────────────────────────────────────────── */
+  .type-row { display: flex; align-items: baseline; gap: 18px; padding: 10px 0; border-bottom: 1px solid var(--panel-border-subtle); }
+  .type-row:last-child { border-bottom: none; }
+  .type-row .role { width: 130px; flex-shrink: 0; color: var(--text-soft); font-size: 12px; font-weight: 600; }
+  .type-row .sample { flex: 1; color: var(--text-main); }
+  .type-row .meta { font-family: var(--font-mono); font-size: 11px; color: var(--text-soft); }
+
+  /* ── BOTONES MINIMALISTAS ──────────────────────────────────────── */
+  .btn-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  .group { display: flex; flex-direction: column; gap: 8px; }
+  .group .gname { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-soft); }
+
+  .btn {
+    font-family: var(--font-body); font-weight: 600; font-size: 13.5px;
+    border-radius: var(--r-sm);
+    padding: 9px 18px; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    border: 1px solid transparent;
+    transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+    outline: none; white-space: nowrap; user-select: none;
+  }
+  .btn .arrow {
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: transform 0.18s ease;
+  }
+  .btn .arrow svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+  .btn:hover .arrow { transform: translateX(2px); }
+
+  /* Primario Sólido */
+  .btn-primary {
+    background: var(--accent);
+    color: #ffffff;
+  }
+  .btn-primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-0.5px);
+  }
+  .btn-primary:active {
+    background: var(--accent-active);
+    transform: scale(0.98);
+  }
+
+  /* Oscuro Apple */
+  .btn-dark {
+    background: var(--btn-dark-bg);
+    color: var(--btn-dark-text);
+  }
+  .btn-dark:hover {
+    background: var(--btn-dark-hover);
+    transform: translateY(-0.5px);
+  }
+  .btn-dark:active { transform: scale(0.98); }
+
+  /* Secundario Outline / Surface */
+  .btn-secondary {
+    background: var(--panel-bg);
+    color: var(--text-main);
+    border-color: var(--panel-border);
+  }
+  .btn-secondary:hover {
+    background: var(--panel-bg-subtle);
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-0.5px);
+  }
+  .btn-secondary:active { transform: scale(0.98); }
+
+  /* Fantasma */
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-muted);
+  }
+  .btn-ghost:hover {
+    background: var(--panel-bg-subtle);
+    color: var(--text-main);
+  }
+  .btn-ghost:active { transform: scale(0.98); }
+
+  /* Peligro */
+  .btn-danger {
+    background: var(--error);
+    color: #ffffff;
+  }
+  .btn-danger:hover {
+    opacity: 0.9;
+    transform: translateY(-0.5px);
+  }
+  .btn-danger:active { transform: scale(0.98); }
+
+  .btn:focus-visible, button:focus-visible, input:focus-visible { box-shadow: var(--focus-ring); outline: none; }
+
+  /* ── CONTROLES E INPUTS ────────────────────────────────────────── */
+  .toggle {
+    width: 44px; height: 26px; border-radius: var(--r-pill);
+    background: var(--badge-neutral-bg); position: relative;
+    cursor: pointer;
+    border: 1px solid var(--panel-border);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+  .toggle::after {
+    content: ""; position: absolute; top: 2px; left: 2px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s cubic-bezier(0.2, 1, 0.3, 1);
+  }
+  .toggle.on {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .toggle.on::after { transform: translateX(18px); }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 12.5px; font-weight: 600; color: var(--text-main); }
+  .field input {
+    font-family: var(--font-body); font-size: 14px; color: var(--text-main);
+    padding: 10px 14px; border-radius: var(--r-sm);
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .field input::placeholder { color: var(--text-soft); }
+  .field input:focus { outline: none; border-color: var(--accent); box-shadow: var(--focus-ring); }
+  .field .help { font-size: 12px; color: var(--text-soft); }
+  .field .error { font-size: 12px; font-weight: 500; color: var(--error); }
+
+  /* ── COMPONENTES DE APLICACIÓN CON SLIDING PILL ────────────────── */
+  .icon {
+    width: 17px; height: 17px; flex-shrink: 0;
+    stroke: currentColor; fill: none; stroke-width: 2;
+    stroke-linecap: round; stroke-linejoin: round;
+  }
+
+  /* Segmented Control */
+  .segmented {
+    display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 3px;
+    background: var(--slide-track-bg);
+    border-radius: var(--r-pill);
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+  }
+  .segmented .sliding-pill {
+    top: 3px; bottom: 3px;
+  }
+  .segmented .seg {
+    position: relative; z-index: 2;
+    flex: 1;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 7px 12px; border-radius: var(--r-pill); border: none;
+    font-family: var(--font-body); font-size: 13px; font-weight: 600;
+    color: var(--text-muted); background: transparent; cursor: pointer;
+    transition: color 0.18s ease;
+    white-space: nowrap;
+  }
+  .segmented .seg:hover { color: var(--text-main); }
+  .segmented .seg.active { color: var(--text-main); font-weight: 600; }
+
+  /* Tabs */
+  .navtabs {
+    display: inline-flex; align-items: center; gap: 2px; padding: 3px;
+    background: var(--slide-track-bg);
+    border-radius: var(--r-pill);
+    position: relative;
+    width: 100%;
+    max-width: 340px;
+  }
+  .navtabs .sliding-pill {
+    top: 3px; bottom: 3px;
+  }
+  .tab {
+    position: relative; z-index: 2;
+    flex: 1;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 7px 14px; border-radius: var(--r-pill);
+    font-family: var(--font-body); font-size: 13.5px; font-weight: 600;
+    color: var(--text-muted); background: transparent; border: none; cursor: pointer;
+    transition: color 0.18s ease;
+    white-space: nowrap;
+  }
+  .tab:hover { color: var(--text-main); }
+  .tab.active { color: var(--text-main); font-weight: 600; }
+  .tab-count {
+    font-size: 11px; font-weight: 700; padding: 1px 6px;
+    border-radius: var(--r-pill); background: var(--panel-border); color: var(--text-main);
+  }
+
+  /* Sliders */
+  .slider-box { display: flex; flex-direction: column; gap: 8px; }
+  .slider-head { display: flex; justify-content: space-between; align-items: center; }
+  .slider-head .slabel { font-size: 13px; font-weight: 600; color: var(--text-main); }
+  .slider-val {
+    font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+    color: var(--accent); background: var(--accent-soft);
+    padding: 2px 8px; border-radius: var(--r-xs);
+    min-width: 38px; text-align: center;
+  }
+  .slider {
+    -webkit-appearance: none; appearance: none; width: 100%; height: 5px;
+    border-radius: var(--r-pill); background: var(--slide-track-bg); outline: none; cursor: pointer;
+  }
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
+    background: #ffffff; border: 1px solid rgba(0,0,0,0.12);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    cursor: grab; transition: transform 0.15s ease;
+  }
+  .slider::-webkit-slider-thumb:active { cursor: grabbing; transform: scale(1.1); }
+
+  /* Dropzone */
+  .dropzone {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    padding: 24px 20px; border: 1.5px dashed var(--input-border);
+    border-radius: var(--r-md); background: var(--panel-bg-subtle);
+    text-align: center; cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+  }
+  .dropzone-icon-wrap {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--accent-soft); color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .dropzone:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .dropzone .dz-title { font-size: 13.5px; font-weight: 600; color: var(--text-main); }
+  .dropzone .dz-hint { font-size: 12px; color: var(--text-soft); }
+
+  /* Badges */
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 600; padding: 4px 10px;
+    border-radius: var(--r-pill);
+    user-select: none;
+  }
+  .badge .bdot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .badge-neutral { background: var(--badge-neutral-bg); color: var(--badge-neutral-text); }
+  .badge-neutral .bdot { background: var(--text-soft); }
+  .badge-rec { background: var(--accent-soft); color: var(--accent); }
+  .badge-rec .bdot { background: var(--accent); }
+  .badge-success { background: var(--success-soft); color: var(--success); }
+  .badge-success .bdot { background: var(--success); }
+
+  /* Search & Cat Card */
+  .search { position: relative; width: 100%; }
+  .search .icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-soft); pointer-events: none; }
+  .search input {
+    width: 100%; font-family: var(--font-body); font-size: 13.5px;
+    color: var(--text-main); background: var(--input-bg);
+    border: 1px solid var(--input-border); border-radius: var(--r-md);
+    padding: 10px 38px 10px 36px;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .search input:focus { outline: none; border-color: var(--accent); box-shadow: var(--focus-ring); }
+  .search .search-kbd {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+    color: var(--text-soft); background: var(--badge-neutral-bg);
+    padding: 2px 5px; border-radius: 4px;
+    pointer-events: none;
+  }
+
+  .cat-card {
+    display: flex; flex-direction: column; gap: 12px; width: 100%;
+    padding: 16px; background: var(--card-catalog-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--r-md);
+    box-shadow: var(--panel-shadow);
+  }
+  .cat-thumb {
+    width: 44px; height: 44px; border-radius: var(--r-sm);
+    background: var(--code-bg); border: 1px solid var(--panel-border-subtle);
+    display: flex; align-items: center; justify-content: center; color: var(--text-main);
+    flex-shrink: 0;
+  }
+  .cat-thumb svg { width: 24px; height: 24px; }
+  .cat-title { font-family: var(--font-display); font-weight: 700; font-size: 14.5px; color: var(--text-main); }
+  .cat-link { font-size: 12px; color: var(--accent); word-break: break-all; margin-top: 2px; font-weight: 500; }
+  .cat-actions { display: flex; gap: 6px; }
+  .icon-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: var(--r-sm);
+    background: var(--panel-bg-subtle); color: var(--text-muted);
+    border: 1px solid var(--panel-border);
+    cursor: pointer; transition: color 0.18s ease, background-color 0.18s ease;
+  }
+  .icon-btn:hover {
+    color: var(--accent); background: var(--accent-soft); border-color: var(--accent-ring);
+  }
+  .icon-btn:active { transform: scale(0.96); }
+  .icon-btn.danger:hover {
+    color: var(--error); background: var(--error-soft); border-color: var(--error);
+  }
+
+  /* ── 04 · TAB BAR FLOTANTE INFERIOR MINIMAL (iOS) ──────────────── */
+  .bottom-tabbar-container {
+    position: fixed; bottom: 24px; left: 0; right: 0;
+    z-index: 100; display: flex; justify-content: center;
+    padding: 0 16px; pointer-events: none;
+  }
+
+  .ios-tabbar {
+    pointer-events: auto;
+    position: relative;
+    display: flex; align-items: center; gap: 4px;
+    padding: 5px; border-radius: var(--r-pill);
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    box-shadow: var(--panel-shadow-elevated);
+  }
+
+  .ios-tab-indicator {
+    position: absolute; top: 5px; bottom: 5px; left: 0;
+    border-radius: var(--r-pill);
+    background: var(--slide-track-bg);
+    pointer-events: none;
+    z-index: 1;
+    transition: transform 0.28s cubic-bezier(0.2, 1, 0.3, 1),
+                width 0.28s cubic-bezier(0.2, 1, 0.3, 1);
+  }
+
+  .ios-tab-btn {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-width: 78px; padding: 6px 14px; border-radius: var(--r-pill);
+    border: none; background: transparent; cursor: pointer;
+    color: var(--text-muted);
+    transition: color 0.18s ease;
+  }
+  .ios-tab-btn:hover { color: var(--text-main); }
+  .ios-tab-btn.active { color: var(--accent); font-weight: 600; }
+  .ios-tab-btn:active { transform: scale(0.95); }
+  .ios-tab-label { font-size: 11px; margin-top: 2px; }
+
+  footer {
+    padding: 48px 0 0; text-align: center;
+    color: var(--text-soft); font-size: 13px;
+  }
+  .foot-note {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--r-pill); padding: 6px 16px;
+    box-shadow: var(--panel-shadow);
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn, .nav-dropdown, .nav-dropdown a, .dropdown-caret, .btn .arrow, .sliding-pill, .ios-tab-indicator { transition: none !important; }
+    .btn:hover, .btn:active { transform: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAVBAR SUPERIOR FLOTANTE MINIMAL ── -->
+<div class="nav-wrapper">
+  <nav class="navbar" id="topNavbar">
+    <a href="#" class="nav-brand">
+      <div class="brand-logo-badge">
+        <svg class="icon" style="width:16px;height:16px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <span>Kobaia QR</span>
+    </a>
+
+    <!-- Grupo con Sliding Pill animado -->
+    <div class="slide-container" id="mainNavGroup">
+      <div class="sliding-pill" id="navIndicator"></div>
+      <button class="nav-link-btn active">Producto</button>
+      <button class="nav-link-btn">Precios</button>
+      <button class="nav-link-btn">Campañas</button>
+      <button class="nav-link-btn">Comunidad</button>
+    </div>
+
+    <div class="nav-actions">
+      <!-- Menú desplegable minimal -->
+      <div class="nav-dropdown-host">
+        <button type="button" class="nav-link-btn" aria-haspopup="true" aria-expanded="false" data-nav-dropdown-trigger>
+          Recursos
+          <span class="dropdown-caret" aria-hidden="true">▾</span>
+        </button>
+        <ul class="nav-dropdown" aria-label="Recursos">
+          <li>
+            <a href="#">
+              <span class="dropdown-name">Generador QR API</span>
+              <span class="dropdown-blurb">Documentación, SDK y webhooks</span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <span class="dropdown-name">Templates</span>
+              <span class="dropdown-blurb">Diseños listos para tu marca</span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <span class="dropdown-name">Guías</span>
+              <span class="dropdown-blurb">Buenas prácticas de escaneo</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- Botón Píldora Negra (Apple Minimal) -->
+      <button class="btn-download-pill">
+        <span class="status-dot"></span>
+        Descargar
+      </button>
+    </div>
+  </nav>
+</div>
+
+<div class="wrap">
+  <header class="hero" data-od-id="hero">
+    <div class="top-bar">
+      <span class="eyebrow">Sistema de Diseño · v2.0 Minimal</span>
+      <button class="theme-toggle-btn" id="themeToggle" type="button" aria-label="Cambiar a modo oscuro" aria-pressed="false" role="switch">
+        <svg class="icon" id="themeIcon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span id="themeText">Modo Oscuro</span>
+      </button>
+    </div>
+    <h1>Kobaia QR · Sistema Minimalista</h1>
+    <p class="lede">
+      Base visual limpia y enfocada para <strong>Kobaia QR</strong>. Diseñado con superficies sólidas neutras,
+      tipografía de alta precisión y microinteracciones ágiles sin transparencias pesadas ni efectos de cristal.
+    </p>
+  </header>
+
+  <!-- 01 · Superficie y fondo -->
+  <section data-od-id="surface-palette">
+    <h2>01 · Superficie y Paleta de Color</h2>
+    <p class="sec-desc">Paleta sólida y contrastada con tonos directos del sistema Apple HIG.</p>
+    <div class="glass card">
+      <div class="swatches">
+        <div class="swatch">
+          <div class="chip" style="background: var(--bg-base);"></div>
+          <div class="label">Superficie Base <span>Fondo neutro</span></div>
+        </div>
+        <div class="swatch">
+          <div class="chip" style="background: var(--accent);"></div>
+          <div class="label">Azul Cupertino <span>Acento principal</span></div>
+        </div>
+        <div class="swatch">
+          <div class="chip" style="background: var(--panel-bg);"></div>
+          <div class="label">Panel Card <span>Superficie sólida</span></div>
+        </div>
+        <div class="swatch">
+          <div class="chip" style="background: var(--text-main);"></div>
+          <div class="label">Texto Primario <span>Alto contraste</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · Paneles -->
+  <section data-od-id="glass-panels">
+    <h2>02 · Paneles y Elevación</h2>
+    <p class="sec-desc">Jerarquía visual estructurada a través de bordes hairline limpios y sombras naturales.</p>
+    <div class="grid2">
+      <div class="glass card">
+        <h3>Panel Estándar</h3>
+        <p>Superficie neutra opaca pensada para agrupar información con bordes sutiles y baja interferencia.</p>
+        <div class="code">background: var(--panel-bg);
+border: 1px solid var(--panel-border);</div>
+      </div>
+      <div class="glass card elevated">
+        <h3>Panel Elevado / Modal</h3>
+        <p>Mayor elevación mediante sombras difusas suaves para diálogos, popovers y áreas prioritarias.</p>
+        <div class="code">box-shadow: var(--panel-shadow-elevated);</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · Tipografía -->
+  <section data-od-id="typography">
+    <h2>03 · Jerarquía Tipográfica</h2>
+    <p class="sec-desc">Pila tipográfica nativa de Apple para máxima legibilidad en todas las plataformas.</p>
+    <div class="glass card">
+      <div class="type-row">
+        <span class="role">Display H1</span>
+        <span class="sample" style="font-family: var(--font-display); font-weight: 700; font-size: 22px; letter-spacing: -0.025em;">Generador de Códigos QR</span>
+        <span class="meta">SF Pro Display · 700</span>
+      </div>
+      <div class="type-row">
+        <span class="role">Sección H2</span>
+        <span class="sample" style="font-family: var(--font-display); font-weight: 600; font-size: 17px; letter-spacing: -0.015em;">Configuración del diseño y marcos</span>
+        <span class="meta">SF Pro Display · 600</span>
+      </div>
+      <div class="type-row">
+        <span class="role">Body Text</span>
+        <span class="sample" style="font-size: 14px;">Personaliza el color, margen y logotipo para optimizar la tasa de escaneo.</span>
+        <span class="meta">SF Pro Text · 400</span>
+      </div>
+      <div class="type-row">
+        <span class="role">Monospace</span>
+        <span class="sample" style="font-family: var(--font-mono); font-size: 13px; color: var(--accent);">KB-2026-PRO-9842</span>
+        <span class="meta">SF Mono</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · Botones y Acciones -->
+  <section data-od-id="actions">
+    <h2>04 · Acciones y Botones</h2>
+    <p class="sec-desc">Botones planos y limpios con transiciones táctiles rápidas.</p>
+    <div class="btn-row">
+      <div class="group">
+        <span class="gname">Primario · Acento</span>
+        <button class="btn btn-primary">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Descargar QR
+          <span class="arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+        </button>
+      </div>
+      <div class="group">
+        <span class="gname">Oscuro Apple</span>
+        <button class="btn btn-dark">
+          Generar QR
+          <span class="arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+        </button>
+      </div>
+      <div class="group">
+        <span class="gname">Secundario</span>
+        <button class="btn btn-secondary">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Personalizar marco
+        </button>
+      </div>
+      <div class="group">
+        <span class="gname">Fantasma</span>
+        <button class="btn btn-ghost">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M2.5 2v6h6M21.5 22v-6h-6"/><path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.3"/></svg>
+          Restablecer
+        </button>
+      </div>
+      <div class="group">
+        <span class="gname">Peligro</span>
+        <button class="btn btn-danger">
+          <svg class="icon" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · Componentes Interactivos -->
+  <section data-od-id="interactive-components">
+    <h2>05 · Componentes de la Aplicación</h2>
+    <p class="sec-desc">Controles específicos para el diseñador y catálogo con soporte magnético de desplazamiento.</p>
+
+    <!-- Segmented & Tabs -->
+    <div class="grid2" style="margin-bottom: 20px;">
+      <div class="glass card">
+        <h3>Selector de tipo (Segmented Slide)</h3>
+        <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 12px;">Control segmentado nativo con selector deslizante.</p>
+        <div class="segmented" id="segGroup">
+          <div class="sliding-pill" id="segIndicator"></div>
+          <button class="seg active" type="button">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            URL
+          </button>
+          <button class="seg" type="button">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            Contacto
+          </button>
+          <button class="seg" type="button">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+            Wi-Fi
+          </button>
+        </div>
+      </div>
+
+      <div class="glass card">
+        <h3>Navegación Superior (Tabs Slide)</h3>
+        <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 12px;">Pestañas de alta resolución con contador reactivo.</p>
+        <div class="navtabs" id="tabGroup">
+          <div class="sliding-pill" id="tabIndicator"></div>
+          <button class="tab active" type="button">
+            <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Diseñador
+          </button>
+          <button class="tab" type="button">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/></svg>
+            Mis Códigos
+            <span class="tab-count">12</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sliders & Dropzone -->
+    <div class="grid2" style="margin-bottom: 20px;">
+      <div class="glass card">
+        <h3>Sliders de Precisión</h3>
+        <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 14px;">Ajuste milimétrico con visualización dinámica de porcentaje.</p>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div class="slider-box">
+            <div class="slider-head">
+              <span class="slabel">Tamaño de Logo</span>
+              <span class="slider-val" id="val-logo">30%</span>
+            </div>
+            <input class="slider" id="slider-logo" type="range" min="10" max="50" value="30" aria-label="Tamaño de Logo">
+          </div>
+          <div class="slider-box">
+            <div class="slider-head">
+              <span class="slabel">Margen de Seguridad</span>
+              <span class="slider-val" id="val-margin">21%</span>
+            </div>
+            <input class="slider" id="slider-margin" type="range" min="0" max="40" value="21" aria-label="Margen de Seguridad">
+          </div>
+        </div>
+      </div>
+
+      <div class="glass card">
+        <h3>Carga de Archivo (Dropzone)</h3>
+        <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 12px;">Área de importación de recursos gráficos con feedback claro.</p>
+        <div class="dropzone" id="dropzoneDemo">
+          <input type="file" id="dropzoneInput" style="display: none;" accept="image/*,.svg">
+          <div class="dropzone-icon-wrap">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          <div>
+            <div class="dz-title">Arrastra tu logotipo aquí</div>
+            <div class="dz-hint">SVG, PNG o JPG hasta 5 MB</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inputs, Badges & Catalog -->
+    <div class="grid2">
+      <div class="glass card">
+        <h3>Campos y Badges</h3>
+        <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 14px;">Búsqueda tipo Spotlight, etiquetas semánticas y switch nativo.</p>
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div class="search">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="search" placeholder="Buscar por URL o campaña...">
+            <span class="search-kbd">⌘K</span>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <span class="badge badge-rec"><span class="bdot"></span>Recomendado</span>
+            <span class="badge badge-success"><span class="bdot"></span>Activo</span>
+            <span class="badge badge-neutral"><span class="bdot"></span>Borrador</span>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--panel-border);">
+            <span style="font-size: 13.5px; font-weight: 600; color: var(--text-main);">Generar QR Dinámico</span>
+            <button class="toggle on" type="button" role="switch" aria-checked="true" aria-label="Generar QR Dinámico"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass card">
+        <h3>Card de Catálogo</h3>
+        <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 14px;">Módulo de visualización de elementos con acciones rápidas.</p>
+        <div class="cat-card">
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <div class="cat-thumb">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <rect x="2" y="2" width="8" height="8" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                <rect x="5" y="5" width="2" height="2"/>
+                <rect x="14" y="2" width="8" height="8" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                <rect x="17" y="5" width="2" height="2"/>
+                <rect x="2" y="14" width="8" height="8" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                <rect x="5" y="17" width="2" height="2"/>
+                <rect x="14" y="14" width="3" height="3" rx="0.5"/>
+                <rect x="19" y="14" width="3" height="3" rx="0.5"/>
+                <rect x="14" y="19" width="3" height="3" rx="0.5"/>
+                <rect x="19" y="19" width="3" height="3" rx="0.5"/>
+              </svg>
+            </div>
+            <div style="flex: 1; min-width: 0;">
+              <div class="cat-title">Campaña Verano 2026</div>
+              <div class="cat-link">kobaia.app/v/summer-26</div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 10px; border-top: 1px solid var(--panel-border);">
+            <span style="font-size: 11.5px; font-weight: 600; color: var(--text-soft);">QR Dinámico · 1.4k scans</span>
+            <div class="cat-actions">
+              <button class="icon-btn" title="Editar" type="button"><svg class="icon" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+              <button class="icon-btn" title="Descargar" type="button"><svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+              <button class="icon-btn danger" title="Eliminar" type="button"><svg class="icon" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="foot-note"><span class="dot"></span> Kobaia QR Design System · Versión 2.0 Minimal</span>
+  </footer>
+</div>
+
+<!-- ── TAB BAR FLOTANTE INFERIOR MINIMAL (iOS) ── -->
+<div class="bottom-tabbar-container">
+  <nav class="ios-tabbar" id="iosTabbar">
+    <div class="ios-tab-indicator" id="iosIndicator"></div>
+
+    <button class="ios-tab-btn" data-tab="novedades">
+      <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+      <span class="ios-tab-label">Novedades</span>
+    </button>
+
+    <button class="ios-tab-btn" data-tab="llamadas">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <span class="ios-tab-label">Llamadas</span>
+    </button>
+
+    <button class="ios-tab-btn" data-tab="comunidades">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span class="ios-tab-label">Comunidades</span>
+    </button>
+
+    <button class="ios-tab-btn active" data-tab="chats">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="ios-tab-label">Chats</span>
+    </button>
+  </nav>
+</div>
+
+<script>
+  // ── MOTOR DE DESPLAZAMIENTO MAGNÉTICO (Sliding Pill) ───────────
+  function initSlidingGroup(containerId, indicatorId, btnSelector) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const indicator = document.getElementById(indicatorId);
+    const buttons = container.querySelectorAll(btnSelector);
+
+    function updatePill(activeBtn) {
+      if (!activeBtn || !indicator) return;
+      const cRect = container.getBoundingClientRect();
+      const bRect = activeBtn.getBoundingClientRect();
+
+      indicator.style.transform = `translateX(${bRect.left - cRect.left}px)`;
+      indicator.style.width = `${bRect.width}px`;
+      indicator.style.opacity = '1';
+    }
+
+    const initial = container.querySelector(btnSelector + '.active') || buttons[0];
+    if (initial) setTimeout(() => updatePill(initial), 50);
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        updatePill(btn);
+      });
+    });
+
+    window.addEventListener('resize', () => {
+      const curr = container.querySelector(btnSelector + '.active');
+      if (curr) updatePill(curr);
+    });
+  }
+
+  // Inicialización de todos los sliders interactivos
+  initSlidingGroup('mainNavGroup', 'navIndicator', '.nav-link-btn');
+  initSlidingGroup('segGroup', 'segIndicator', '.seg');
+  initSlidingGroup('tabGroup', 'tabIndicator', '.tab');
+  initSlidingGroup('iosTabbar', 'iosIndicator', '.ios-tab-btn');
+
+  // ── CONTROL DE TEMA (Light / Dark) ──────────────────────────────
+  const toggleBtn = document.getElementById('themeToggle');
+  const themeText = document.getElementById('themeText');
+  const themeIcon = document.getElementById('themeIcon');
+  const root = document.documentElement;
+
+  const sunIcon = `<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>`;
+  const moonIcon = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+
+  function setTheme(theme) {
+    root.setAttribute('data-theme', theme);
+    if (theme === 'dark') {
+      if (themeText) themeText.textContent = 'Modo Claro';
+      if (themeIcon) themeIcon.innerHTML = sunIcon;
+      if (toggleBtn) {
+        toggleBtn.setAttribute('aria-pressed', 'true');
+        toggleBtn.setAttribute('aria-label', 'Cambiar a modo claro');
+      }
+    } else {
+      if (themeText) themeText.textContent = 'Modo Oscuro';
+      if (themeIcon) themeIcon.innerHTML = moonIcon;
+      if (toggleBtn) {
+        toggleBtn.setAttribute('aria-pressed', 'false');
+        toggleBtn.setAttribute('aria-label', 'Cambiar a modo oscuro');
+      }
+    }
+    localStorage.setItem('kobaia-theme', theme);
+
+    setTimeout(() => {
+      ['mainNavGroup', 'segGroup', 'tabGroup', 'iosTabbar'].forEach(id => {
+        const c = document.getElementById(id);
+        if (!c) return;
+        const active = c.querySelector('.active');
+        if (active) active.click();
+      });
+    }, 60);
+  }
+
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      const currentTheme = root.getAttribute('data-theme') || 'light';
+      setTheme(currentTheme === 'light' ? 'dark' : 'light');
+    });
+  }
+
+  const savedTheme = localStorage.getItem('kobaia-theme');
+  if (savedTheme) {
+    setTheme(savedTheme);
+  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    setTheme('dark');
+  } else {
+    setTheme('light');
+  }
+
+  // ── TOGGLES Y SLIDERS ───────────────────────────────────────────
+  document.querySelectorAll('.toggle').forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      const enabled = toggle.classList.toggle('on');
+      toggle.setAttribute('aria-checked', String(enabled));
+    });
+  });
+
+  const sliderLinks = [
+    ['slider-logo', 'val-logo'],
+    ['slider-margin', 'val-margin']
+  ];
+  const updateSliderTrack = (slider) => {
+    const min = parseFloat(slider.min) || 0;
+    const max = parseFloat(slider.max) || 100;
+    const val = parseFloat(slider.value);
+    const pct = ((val - min) / (max - min)) * 100;
+    slider.style.background = `linear-gradient(to right, var(--accent) 0%, var(--accent) ${pct}%, var(--slide-track-bg) ${pct}%, var(--slide-track-bg) 100%)`;
+  };
+
+  sliderLinks.forEach(([sliderId, valueId]) => {
+    const slider = document.getElementById(sliderId);
+    const value = document.getElementById(valueId);
+    if (slider && value) {
+      updateSliderTrack(slider);
+      slider.addEventListener('input', () => {
+        value.textContent = `${slider.value}%`;
+        updateSliderTrack(slider);
+      });
+    }
+  });
+
+  // Dropzone
+  const dropzone = document.getElementById('dropzoneDemo');
+  const dropInput = document.getElementById('dropzoneInput');
+  if (dropzone && dropInput) {
+    dropzone.addEventListener('click', () => dropInput.click());
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.style.borderColor = 'var(--accent)';
+      dropzone.style.backgroundColor = 'var(--accent-soft)';
+    });
+    ['dragleave', 'drop'].forEach(evt => {
+      dropzone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        dropzone.style.borderColor = '';
+        dropzone.style.backgroundColor = '';
+        if (evt === 'drop' && e.dataTransfer.files.length > 0) {
+          const title = dropzone.querySelector('.dz-title');
+          if (title) title.textContent = `Archivo: ${e.dataTransfer.files[0].name}`;
+        }
+      });
+    });
+    dropInput.addEventListener('change', () => {
+      if (dropInput.files.length > 0) {
+        const title = dropzone.querySelector('.dz-title');
+        if (title) title.textContent = `Archivo: ${dropInput.files[0].name}`;
+      }
+    });
+  }
+
+  // Dropdown accesibilidad
+  document.querySelectorAll('[data-nav-dropdown-trigger]').forEach(trigger => {
+    const host = trigger.closest('.nav-dropdown-host');
+    if (!host) return;
+    trigger.addEventListener('click', () => {
+      const open = host.classList.toggle('is-open');
+      trigger.setAttribute('aria-expanded', String(open));
+    });
+    document.addEventListener('click', (ev) => {
+      if (!host.contains(ev.target)) {
+        host.classList.remove('is-open');
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+    document.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape') {
+        host.classList.remove('is-open');
+        trigger.setAttribute('aria-expanded', 'false');
+        trigger.focus();
+      }
+    });
+  });
+</script>
+</body>
+</html>

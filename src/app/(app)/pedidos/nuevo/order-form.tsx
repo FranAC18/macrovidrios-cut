@@ -48,9 +48,11 @@ export function OrderForm({
   };
 
   const totalAreaM2 = rows.reduce(
-    (sum, row) => sum + ((row.width_mm || 0) * (row.height_mm || 0) * (row.quantity || 0)) / 1_000_000,
+    (sum, row) => sum + ((row.width_mm || 0) * (row.height_mm || 0) * (row.quantity || 0)) / 10_000,
     0,
   );
+
+  const cmToMm = (value: number) => Math.round((value || 0) * 10);
 
   return (
     <form action={formAction} className="space-y-4">
@@ -62,8 +64,8 @@ export function OrderForm({
             glass_product_id: row.glass_product_id,
             name: row.name || null,
             quantity: row.quantity,
-            width_mm: row.width_mm,
-            height_mm: row.height_mm,
+            width_mm: cmToMm(row.width_mm),
+            height_mm: cmToMm(row.height_mm),
             rotatable: row.rotatable,
             notes: null,
           })),
@@ -163,20 +165,22 @@ export function OrderForm({
                   </Select>
                 </div>
                 <div className="space-y-1">
-                  <Label>Ancho (mm) *</Label>
+                  <Label>Ancho (cm) *</Label>
                   <Input
                     type="number"
-                    inputMode="numeric"
+                    inputMode="decimal"
+                    step="0.1"
                     value={row.width_mm || ""}
                     onChange={(event) => updateRow(row.key, { width_mm: Number(event.target.value) })}
                     required
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label>Alto (mm) *</Label>
+                  <Label>Alto (cm) *</Label>
                   <Input
                     type="number"
-                    inputMode="numeric"
+                    inputMode="decimal"
+                    step="0.1"
                     value={row.height_mm || ""}
                     onChange={(event) => updateRow(row.key, { height_mm: Number(event.target.value) })}
                     required

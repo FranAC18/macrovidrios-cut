@@ -3,23 +3,25 @@ import Link from "next/link";
 import { AlertTriangle, Inbox, Lock, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 
 export function PageHeader({
   title,
   description,
+  eyebrow,
   action,
   children,
 }: {
   title: string;
   description?: string;
+  eyebrow?: string;
   action?: React.ReactNode;
   children?: React.ReactNode;
 }) {
   return (
     <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-      <div className="space-y-1">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{title}</h1>
+      <div className="space-y-2">
+        {eyebrow ? <span className="eyebrow">{eyebrow}</span> : null}
+        <h1 className="font-display text-2xl font-extrabold tracking-tight sm:text-[28px]">{title}</h1>
         {description ? <p className="text-sm text-muted-foreground">{description}</p> : null}
       </div>
       <div className="flex flex-wrap items-center gap-2">
@@ -35,26 +37,34 @@ export function StatCard({
   value,
   hint,
   tone = "default",
+  icon: Icon,
 }: {
   label: string;
   value: React.ReactNode;
   hint?: string;
-  tone?: "default" | "success" | "warning";
+  tone?: "default" | "success" | "warning" | "danger";
+  icon?: React.ComponentType<{ className?: string }>;
 }) {
   return (
-    <Card className="p-4">
-      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
+    <div className="panel p-5">
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-muted-foreground">
+          {label}
+        </p>
+        {Icon ? <Icon className="h-4 w-4 text-muted-foreground" /> : null}
+      </div>
       <p
         className={cn(
-          "mt-2 text-2xl font-bold",
-          tone === "success" && "text-emerald-700",
-          tone === "warning" && "text-amber-700",
+          "mt-2 font-display text-2xl font-extrabold tracking-tight sm:text-3xl",
+          tone === "success" && "text-success",
+          tone === "warning" && "text-warning",
+          tone === "danger" && "text-destructive",
         )}
       >
         {value}
       </p>
       {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
-    </Card>
+    </div>
   );
 }
 
@@ -70,12 +80,12 @@ export function EmptyState({
   actionHref?: string;
 }) {
   return (
-    <Card className="flex flex-col items-center justify-center gap-3 p-10 text-center">
-      <div className="rounded-full bg-muted p-3 text-muted-foreground">
+    <div className="panel flex flex-col items-center justify-center gap-3 p-10 text-center">
+      <div className="rounded-full bg-accent p-3 text-accent-foreground">
         <Inbox className="h-6 w-6" />
       </div>
       <div>
-        <p className="font-semibold">{title}</p>
+        <p className="font-display font-bold">{title}</p>
         {description ? <p className="mt-1 text-sm text-muted-foreground">{description}</p> : null}
       </div>
       {actionLabel && actionHref ? (
@@ -84,7 +94,7 @@ export function EmptyState({
           {actionLabel}
         </Link>
       ) : null}
-    </Card>
+    </div>
   );
 }
 
@@ -96,23 +106,23 @@ export function ErrorState({
   description?: string;
 }) {
   return (
-    <Card className="flex flex-col items-center gap-2 border-destructive/40 p-8 text-center">
+    <div className="panel flex flex-col items-center gap-2 border-destructive/30 p-8 text-center">
       <AlertTriangle className="h-6 w-6 text-destructive" />
-      <p className="font-semibold">{title}</p>
+      <p className="font-display font-bold">{title}</p>
       <p className="text-sm text-muted-foreground">{description}</p>
-    </Card>
+    </div>
   );
 }
 
 export function NoPermissionState() {
   return (
-    <Card className="flex flex-col items-center gap-2 p-10 text-center">
+    <div className="panel flex flex-col items-center gap-2 p-10 text-center">
       <Lock className="h-6 w-6 text-muted-foreground" />
-      <p className="font-semibold">Sin permisos</p>
+      <p className="font-display font-bold">Sin permisos</p>
       <p className="text-sm text-muted-foreground">
         Tu rol no tiene acceso a esta seccion. Solicita acceso a un administrador.
       </p>
-    </Card>
+    </div>
   );
 }
 

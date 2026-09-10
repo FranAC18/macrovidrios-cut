@@ -51,7 +51,7 @@ export default async function OrdersPage({
         </Link>
       </PageHeader>
 
-      <form className="mb-4 grid gap-3 rounded-lg border border-border bg-card p-4 sm:grid-cols-[2fr_1fr_auto]">
+      <form className="mb-4 grid gap-3 panel p-4 sm:grid-cols-[2fr_1fr_auto]">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input name="q" defaultValue={params.q} placeholder="Buscar numero, cliente o referencia" className="pl-9" />
@@ -79,7 +79,7 @@ export default async function OrdersPage({
           actionHref="/pedidos/nuevo"
         />
       ) : (
-        <div className="rounded-lg border border-border bg-card">
+        <div className="panel">
           <Table>
             <TableHeader>
               <TableRow>

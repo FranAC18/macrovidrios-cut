@@ -40,7 +40,7 @@ export default async function CuttingJobsPage() {
           actionHref="/cuadres/nuevo"
         />
       ) : (
-        <div className="rounded-lg border border-border bg-card">
+        <div className="panel overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>

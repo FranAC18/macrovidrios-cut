@@ -14,8 +14,21 @@ export function formatPercent(value: number, decimals = 1): string {
   return `${(value ?? 0).toFixed(decimals)}%`;
 }
 
+function trim(value: number): string {
+  const rounded = Math.round(value * 10) / 10;
+  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+}
+
+export function formatCm(mm: number): string {
+  return `${trim((mm ?? 0) / 10)} cm`;
+}
+
 export function formatMm(value: number): string {
   return `${value} mm`;
+}
+
+export function formatDimensions(width: number, height: number): string {
+  return `${trim(width / 10)} × ${trim(height / 10)} cm`;
 }
 
 export function formatDate(iso: string | null | undefined): string {
@@ -33,8 +46,4 @@ export function formatDateOnly(iso: string | null | undefined): string {
     dateStyle: "medium",
     timeZone: "America/Guayaquil",
   }).format(new Date(iso));
-}
-
-export function formatDimensions(width: number, height: number): string {
-  return `${width} × ${height} mm`;
 }

@@ -35,7 +35,7 @@ export default async function SheetsPage() {
           {sheets.length === 0 ? (
             <EmptyState title="Sin planchas registradas" description="Registra existencias para poder cuadrar." />
           ) : (
-            <div className="rounded-lg border border-border bg-card">
+            <div className="panel overflow-hidden">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -78,7 +78,7 @@ export default async function SheetsPage() {
             </div>
           )}
 
-          <div className="rounded-lg border border-border bg-card p-4">
+          <div className="panel overflow-hidden p-4">
             <h2 className="mb-3 text-sm font-semibold">Formatos configurados</h2>
             <div className="grid gap-2 sm:grid-cols-2">
               {sheetTypes.map((sheetType) => (

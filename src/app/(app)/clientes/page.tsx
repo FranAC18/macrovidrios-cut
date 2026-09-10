@@ -43,7 +43,7 @@ export default async function CustomersPage({
               description="Crea el primer cliente para asociarlo a los pedidos."
             />
           ) : (
-            <div className="rounded-lg border border-border bg-card">
+            <div className="panel overflow-hidden">
               <Table>
                 <TableHeader>
                   <TableRow>

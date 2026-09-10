@@ -37,12 +37,12 @@ export function SheetTypeForm() {
             <Input id="st-name" name="name" placeholder="Plancha 3210 × 2140" required />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="st-width">Ancho (mm) *</Label>
-            <Input id="st-width" name="width_mm" type="number" inputMode="numeric" required />
+            <Label htmlFor="st-width">Ancho (cm) *</Label>
+            <Input id="st-width" name="width_cm" type="number" step="0.1" inputMode="decimal" required />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="st-height">Alto (mm) *</Label>
-            <Input id="st-height" name="height_mm" type="number" inputMode="numeric" required />
+            <Label htmlFor="st-height">Alto (cm) *</Label>
+            <Input id="st-height" name="height_cm" type="number" step="0.1" inputMode="decimal" required />
           </div>
           <div className="space-y-2 sm:col-span-2">
             <Label htmlFor="st-cost">Costo por plancha (USD)</Label>
