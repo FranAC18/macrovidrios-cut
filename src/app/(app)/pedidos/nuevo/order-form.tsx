@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FieldError, Input, Label, Select, Textarea } from "@/components/ui/input";
 import { MaterialSelect } from "@/components/forms/material-select";
 import { MaterialSwatch } from "@/components/forms/material-swatch";
+import { MeasurementInput, MEASUREMENT_MAX_CM } from "@/components/forms/measurement-input";
 import { cn } from "@/lib/utils";
 import type { ProductView } from "@/lib/data";
 import type { Customer } from "@/types/domain";
@@ -41,7 +42,13 @@ function emptyGroup(): MaterialGroup {
 }
 
 function isPieceComplete(piece: PieceRow): boolean {
-  return piece.width_mm > 0 && piece.height_mm > 0 && piece.quantity > 0;
+  return (
+    piece.width_mm >= 1 &&
+    piece.width_mm <= MEASUREMENT_MAX_CM &&
+    piece.height_mm >= 1 &&
+    piece.height_mm <= MEASUREMENT_MAX_CM &&
+    piece.quantity > 0
+  );
 }
 
 function trim(value: number): string {
@@ -411,29 +418,23 @@ export function OrderForm({
                             {pieceOpen ? (
                               <div className="animate-rise border-t border-border p-3">
                                 <div className="grid gap-3 sm:grid-cols-5">
-                                  <div className="space-y-1">
+                                  <div className="space-y-1.5">
                                     <Label htmlFor={`width-${group.key}-${piece.key}`}>Ancho (cm) *</Label>
-                                    <Input
+                                    <MeasurementInput
                                       id={`width-${group.key}-${piece.key}`}
-                                      type="number"
-                                      inputMode="decimal"
-                                      step="0.1"
-                                      value={piece.width_mm || ""}
-                                      onChange={(event) =>
-                                        updatePiece(group.key, piece.key, { width_mm: Number(event.target.value) })
+                                      value={piece.width_mm}
+                                      onChange={(value) =>
+                                        updatePiece(group.key, piece.key, { width_mm: value })
                                       }
                                     />
                                   </div>
-                                  <div className="space-y-1">
+                                  <div className="space-y-1.5">
                                     <Label htmlFor={`height-${group.key}-${piece.key}`}>Alto (cm) *</Label>
-                                    <Input
+                                    <MeasurementInput
                                       id={`height-${group.key}-${piece.key}`}
-                                      type="number"
-                                      inputMode="decimal"
-                                      step="0.1"
-                                      value={piece.height_mm || ""}
-                                      onChange={(event) =>
-                                        updatePiece(group.key, piece.key, { height_mm: Number(event.target.value) })
+                                      value={piece.height_mm}
+                                      onChange={(value) =>
+                                        updatePiece(group.key, piece.key, { height_mm: value })
                                       }
                                     />
                                   </div>
