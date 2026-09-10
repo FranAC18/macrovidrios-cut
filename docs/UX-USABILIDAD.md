@@ -259,4 +259,45 @@ Para avanzar hace falta confirmar con MacroVidrios:
 Sin esa confirmacion, la Etapa 1 (captura) es segura; las etapas 2 y 3 deben validarse
 con el negocio antes de produccion.
 
+## 10. Datos del pedido, medidas y edicion (ronda de mejoras)
+
+Referencias: capturas del formulario actual y patrones tipo iOS (picker de rueda,
+lista de ajustes por filas, tarjetas con accion de edicion).
+
+### 10.1 Datos del pedido
+
+- **Agregar cliente desde el pedido**: junto al selector de cliente debe existir la accion
+  "Nuevo cliente" que permita capturar nombre y telefono sin salir del flujo y dejarlo
+  seleccionado. Evita ir a Clientes y volver.
+- **Fecha de compromiso**: sustituir el calendario por un **selector de rueda** de
+  **dia** y **mes**. El **año se calcula automaticamente**: si el dia/mes elegido ya paso,
+  se usa el año siguiente; si no, el año actual. Se guarda como fecha ISO.
+- **Descuento**: no se captura al crear. El descuento se aplica despues, al cotizar o
+  modificar el pedido. Se retira del formulario de alta.
+- **Editar pedido**: debe existir la opcion de modificar un pedido ya creado (cliente,
+  referencia, fecha, notas y piezas) mientras no tenga un trabajo de corte activo
+  (`draft`, `pending`, `queued`). Con trabajo activo se bloquea y se explica.
+
+### 10.2 Medidas (ancho / alto)
+
+- **Sin slider**: se retira la barra deslizante; no aporta y ensucia la vista de PC.
+- **Steppers + entrada manual** como unica interaccion, con la unidad (cm) visible.
+- **Bloquear valores negativos** y cualquier medida invalida: el campo no acepta `-`,
+  y al salir se normaliza el rango y se avisa si esta fuera.
+- **PC**: el valor centrado, sin flechas nativas del input numerico, con los botones
+  `−`/`+` a los lados y una altura consistente con los demas campos.
+
+### 10.3 Patrones de referencia (iOS)
+
+- Picker de rueda para seleccionar valores de una lista larga (dias, meses, medidas).
+- Filas de ajuste con etiqueta a la izquierda y valor/accion a la derecha.
+- Tarjetas con accion de edicion (lapiz) y un boton `+` flotante para agregar; se aplica
+  a la edicion de pedidos y a la gestion de materiales.
+
+### 10.4 Numeros negativos (regla global)
+
+- Ninguna cantidad, medida, precio o descuento acepta valores negativos.
+- Los campos se marcan con `min` y se sanean en el cliente y en el servidor (Zod).
+
+
 

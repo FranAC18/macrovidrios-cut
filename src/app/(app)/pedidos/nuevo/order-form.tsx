@@ -1,15 +1,17 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, Check, ChevronDown, Layers, Plus, Trash2 } from "lucide-react";
 import { createOrderAction, type OrderActionState } from "@/actions/orders";
+import { createCustomerQuickAction } from "@/actions/customers";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FieldError, Input, Label, Select, Textarea } from "@/components/ui/input";
 import { MaterialSelect } from "@/components/forms/material-select";
 import { MaterialSwatch } from "@/components/forms/material-swatch";
 import { MeasurementInput, MEASUREMENT_MAX_CM } from "@/components/forms/measurement-input";
+import { MonthDayPicker } from "@/components/forms/month-day-picker";
 import { cn } from "@/lib/utils";
 import type { ProductView } from "@/lib/data";
 import type { Customer } from "@/types/domain";
@@ -71,7 +73,36 @@ export function OrderForm({
   const [openData, setOpenData] = useState(true);
   const [customerId, setCustomerId] = useState("");
   const [reference, setReference] = useState("");
+  const [dueAt, setDueAt] = useState("");
+  const [customerList, setCustomerList] = useState(() =>
+    customers.map((customer) => ({ id: customer.id, full_name: customer.full_name })),
+  );
+  const [showNewCustomer, setShowNewCustomer] = useState(false);
+  const [newCustomerName, setNewCustomerName] = useState("");
+  const [newCustomerPhone, setNewCustomerPhone] = useState("");
+  const [quickError, setQuickError] = useState<string | null>(null);
+  const [creatingCustomer, startCreateCustomer] = useTransition();
   const [clientError, setClientError] = useState<string | null>(null);
+
+  const createCustomer = () => {
+    setQuickError(null);
+    startCreateCustomer(async () => {
+      const result = await createCustomerQuickAction({
+        full_name: newCustomerName,
+        phone: newCustomerPhone,
+      });
+      if (result.ok && result.customer) {
+        const created = result.customer;
+        setCustomerList((list) => [...list, created]);
+        setCustomerId(created.id);
+        setNewCustomerName("");
+        setNewCustomerPhone("");
+        setShowNewCustomer(false);
+      } else {
+        setQuickError(result.error ?? "No pudimos crear el cliente.");
+      }
+    });
+  };
 
   const productName = (id: string) => products.find((product) => product.id === id)?.name ?? "Sin material";
   const colorName = (id: string) => products.find((product) => product.id === id)?.color_name ?? null;
@@ -231,7 +262,7 @@ export function OrderForm({
               Datos del pedido
             </span>
             <span className="mt-1 block truncate text-sm text-muted-foreground">
-              {customers.find((customer) => customer.id === customerId)?.full_name ?? "Sin cliente"}
+              {customerList.find((customer) => customer.id === customerId)?.full_name ?? "Sin cliente"}
               {reference ? ` · ${reference}` : ""}
             </span>
           </span>
@@ -240,8 +271,18 @@ export function OrderForm({
           />
         </button>
         <CardContent className={cn("grid gap-4 sm:grid-cols-2", !openData && "hidden")}>
-          <div className="space-y-2">
-            <Label htmlFor="customer_id">Cliente</Label>
+          <div className="space-y-2 sm:col-span-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="customer_id">Cliente</Label>
+              <button
+                type="button"
+                onClick={() => setShowNewCustomer((value) => !value)}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Nuevo cliente
+              </button>
+            </div>
             <Select
               id="customer_id"
               name="customer_id"
@@ -249,14 +290,45 @@ export function OrderForm({
               onChange={(event) => setCustomerId(event.target.value)}
             >
               <option value="">Sin cliente</option>
-              {customers.map((customer) => (
+              {customerList.map((customer) => (
                 <option key={customer.id} value={customer.id}>
                   {customer.full_name}
                 </option>
               ))}
             </Select>
+            {showNewCustomer ? (
+              <div className="mt-2 grid gap-2 rounded-lg border border-border bg-muted/40 p-3 sm:grid-cols-[1fr_1fr_auto_auto]">
+                <Input
+                  value={newCustomerName}
+                  onChange={(event) => setNewCustomerName(event.target.value)}
+                  placeholder="Nombre *"
+                  aria-label="Nombre del nuevo cliente"
+                />
+                <Input
+                  value={newCustomerPhone}
+                  onChange={(event) => setNewCustomerPhone(event.target.value)}
+                  placeholder="Telefono"
+                  inputMode="tel"
+                  aria-label="Telefono del nuevo cliente"
+                />
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={createCustomer}
+                  disabled={creatingCustomer || newCustomerName.trim().length < 2}
+                >
+                  {creatingCustomer ? "Guardando..." : "Guardar"}
+                </Button>
+                <Button type="button" size="sm" variant="ghost" onClick={() => setShowNewCustomer(false)}>
+                  Cancelar
+                </Button>
+                {quickError ? (
+                  <p className="text-xs font-medium text-destructive sm:col-span-4">{quickError}</p>
+                ) : null}
+              </div>
+            ) : null}
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2 sm:col-span-2">
             <Label htmlFor="reference">Referencia</Label>
             <Input
               id="reference"
@@ -266,13 +338,10 @@ export function OrderForm({
               placeholder="Obra, proyecto o nota corta"
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="due_at">Fecha compromiso</Label>
-            <Input id="due_at" name="due_at" type="date" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="discount">Descuento (USD)</Label>
-            <Input id="discount" name="discount" type="number" step="0.01" inputMode="decimal" defaultValue={0} />
+          <div className="space-y-2 sm:col-span-2">
+            <Label>Fecha compromiso</Label>
+            <MonthDayPicker value={dueAt || null} onChange={setDueAt} />
+            <input type="hidden" name="due_at" value={dueAt} />
           </div>
           <div className="space-y-2 sm:col-span-2">
             <Label htmlFor="notes">Notas</Label>
@@ -417,7 +486,7 @@ export function OrderForm({
 
                             {pieceOpen ? (
                               <div className="animate-rise border-t border-border p-3">
-                                <div className="grid gap-3 sm:grid-cols-5">
+                                <div className="grid gap-3 sm:grid-cols-2">
                                   <div className="space-y-1.5">
                                     <Label htmlFor={`width-${group.key}-${piece.key}`}>Ancho (cm) *</Label>
                                     <MeasurementInput
@@ -444,13 +513,16 @@ export function OrderForm({
                                       id={`qty-${group.key}-${piece.key}`}
                                       type="number"
                                       inputMode="numeric"
+                                      min={1}
                                       value={piece.quantity || ""}
                                       onChange={(event) =>
-                                        updatePiece(group.key, piece.key, { quantity: Number(event.target.value) })
+                                        updatePiece(group.key, piece.key, {
+                                          quantity: Math.max(0, Number(event.target.value)),
+                                        })
                                       }
                                     />
                                   </div>
-                                  <div className="space-y-1 sm:col-span-2">
+                                  <div className="space-y-1">
                                     <Label htmlFor={`name-${group.key}-${piece.key}`}>Descripcion</Label>
                                     <Input
                                       id={`name-${group.key}-${piece.key}`}
@@ -461,7 +533,7 @@ export function OrderForm({
                                       placeholder="Ventanal, repisa..."
                                     />
                                   </div>
-                                  <label className="flex items-center gap-2 text-sm sm:col-span-5">
+                                  <label className="flex items-center gap-2 text-sm sm:col-span-2">
                                     <input
                                       type="checkbox"
                                       checked={piece.rotatable}

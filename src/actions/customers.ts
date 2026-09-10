@@ -44,3 +44,39 @@ export async function archiveCustomerAction(formData: FormData): Promise<void> {
   getRepository().archiveCustomer(id, user.id);
   revalidatePath("/clientes");
 }
+
+export interface QuickCustomerResult {
+  ok?: boolean;
+  error?: string;
+  customer?: { id: string; full_name: string };
+}
+
+export async function createCustomerQuickAction(input: {
+  full_name: string;
+  phone?: string;
+}): Promise<QuickCustomerResult> {
+  const user = await requirePermission("customers.manage");
+  const name = input.full_name?.trim() ?? "";
+  if (name.length < 2) {
+    return { error: "El nombre del cliente es obligatorio." };
+  }
+  try {
+    const customer = getRepository().createCustomer(
+      {
+        full_name: name,
+        identification_number: null,
+        phone: input.phone?.trim() || null,
+        whatsapp: null,
+        email: null,
+        address: null,
+        notes: null,
+        active: true,
+      },
+      user.id,
+    );
+    revalidatePath("/clientes");
+    return { ok: true, customer: { id: customer.id, full_name: customer.full_name } };
+  } catch (error) {
+    return { error: toUserMessage(error) };
+  }
+}

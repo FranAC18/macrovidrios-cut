@@ -35,19 +35,19 @@ export function MeasurementInput({
 }) {
   const outOfRange = value > 0 && (value < min || value > max);
   const text = value > 0 ? String(round(value)) : "";
-  const sliderValue = value > 0 ? clamp(value, min, max) : min;
 
   const stepBy = (delta: number) => {
     const base = value > 0 ? value : 0;
     onChange(clamp(round(base + delta), min, max));
   };
+
   const handleText = (raw: string) => {
     if (raw === "") {
       onChange(0);
       return;
     }
     const parsed = Number(raw.replace(",", "."));
-    if (Number.isNaN(parsed)) return;
+    if (Number.isNaN(parsed) || parsed < 0) return;
     onChange(round(parsed));
   };
 
@@ -60,7 +60,7 @@ export function MeasurementInput({
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1.5">
       <div className="flex items-stretch gap-2">
         <button
           type="button"
@@ -76,15 +76,23 @@ export function MeasurementInput({
             id={id}
             type="number"
             inputMode="decimal"
+            min={min}
+            max={max}
             step={step}
             value={text}
             disabled={disabled}
             onChange={(event) => handleText(event.target.value)}
+            onKeyDown={(event) => {
+              if (["-", "e", "E", "+"].includes(event.key)) event.preventDefault();
+            }}
             onBlur={normalize}
             placeholder="0"
             className={cn(
               "h-11 w-full rounded-md border bg-card px-3 pr-10 text-center text-sm font-semibold tabular-nums shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring/15",
-              outOfRange ? "border-destructive focus-visible:border-destructive" : "border-input focus-visible:border-primary",
+              "[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+              outOfRange
+                ? "border-destructive focus-visible:border-destructive"
+                : "border-input focus-visible:border-primary",
             )}
           />
           <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground">
@@ -101,17 +109,6 @@ export function MeasurementInput({
           <Plus className="h-4 w-4" />
         </button>
       </div>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={sliderValue}
-        disabled={disabled}
-        onChange={(event) => onChange(round(Number(event.target.value)))}
-        aria-label="Deslizador de medida"
-        className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-muted accent-primary"
-      />
       {outOfRange ? (
         <p className="text-xs font-medium text-destructive">
           La medida debe estar entre {min} y {max} {unit}.
