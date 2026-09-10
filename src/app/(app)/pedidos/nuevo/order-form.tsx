@@ -2,12 +2,13 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, ChevronDown, Layers, Plus, Trash2 } from "lucide-react";
+import { AlertTriangle, ArrowRight, Check, ChevronDown, Layers, Plus, Trash2 } from "lucide-react";
 import { createOrderAction, type OrderActionState } from "@/actions/orders";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FieldError, Input, Label, Select, Textarea } from "@/components/ui/input";
 import { MaterialSelect } from "@/components/forms/material-select";
+import { MaterialSwatch } from "@/components/forms/material-swatch";
 import { cn } from "@/lib/utils";
 import type { ProductView } from "@/lib/data";
 import type { Customer } from "@/types/domain";
@@ -66,6 +67,7 @@ export function OrderForm({
   const [clientError, setClientError] = useState<string | null>(null);
 
   const productName = (id: string) => products.find((product) => product.id === id)?.name ?? "Sin material";
+  const colorName = (id: string) => products.find((product) => product.id === id)?.color_name ?? null;
 
   const groupArea = (group: MaterialGroup) =>
     group.pieces.reduce(
@@ -307,8 +309,11 @@ export function OrderForm({
                     className="flex min-w-0 flex-1 items-center gap-3 text-left"
                     aria-expanded={materialOpen}
                   >
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                      {groupIndex + 1}
+                    <span className="relative shrink-0">
+                      <MaterialSwatch colorName={hasMaterial ? colorName(group.glass_product_id) : null} />
+                      <span className="absolute -left-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-[10px] font-bold text-background">
+                        {groupIndex + 1}
+                      </span>
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-semibold">
@@ -469,7 +474,14 @@ export function OrderForm({
                                 </div>
                                 {complete ? (
                                   <div className="mt-3 flex justify-end">
-                                    <Button type="button" variant="ghost" size="sm" onClick={() => setOpenPiece(null)}>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => setOpenPiece(null)}
+                                      className="gap-1.5"
+                                    >
+                                      <Check className="h-4 w-4 text-success" />
                                       Listo
                                     </Button>
                                   </div>
@@ -482,22 +494,22 @@ export function OrderForm({
 
                       <Button
                         type="button"
-                        variant="outline"
                         onClick={() => addPiece(group.key)}
-                        className="h-12 w-full justify-center gap-2 border-2 border-dashed border-primary/40 bg-accent/30 text-sm font-semibold text-primary hover:border-primary hover:bg-accent"
+                        className="group h-12 w-full gap-2 text-sm font-semibold"
                       >
                         <Plus className="h-5 w-5" />
                         Agregar pieza en este material
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                       </Button>
                     </div>
 
                     <Button
                       type="button"
                       variant="secondary"
-                      size="sm"
                       onClick={() => toggleGroup(group)}
-                      className="w-full"
+                      className="h-11 w-full gap-2 text-sm font-semibold"
                     >
+                      <Check className="h-4 w-4 text-success" />
                       Listo con este material
                     </Button>
                   </div>

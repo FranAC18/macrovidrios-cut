@@ -142,3 +142,53 @@ cuadre falla sin guia.
 5. `docs`: actualizar este documento y el backlog con el estado real.
 
 Cada cambio se commitea de forma aislada y se hace push tras la revision del usuario.
+
+## 8. Botones y tarjetas de material (referencia Kobaia3)
+
+Referencias tomadas de `Kobaia3.html`: seccion **04 · Acciones y Botones**,
+seccion **05 · Campos y Badges** y el **Card de Catalogo**.
+
+### 8.1 Requisitos de los botones
+
+- Jerarquia clara: una accion principal por contexto.
+- Lenguaje humano y accion explicita (evitar "Procesar", "Ejecutar").
+- Microinteraccion sutil (flecha que avanza en hover), sin exagerar.
+- Objetivos tactiles de al menos 44 px de alto en movil.
+- Estados consistentes: normal, hover, activo y deshabilitado.
+- No usar botones punteados para acciones frecuentes (se perciben como "zona de carga").
+
+### 8.2 Opciones consideradas
+
+| Accion | Opcion descartada | Opcion elegida | Motivo |
+|---|---|---|---|
+| Agregar pieza | Boton punteado (zona de carga) | **Primario solido** con `+` y flecha | Es la accion mas frecuente del material |
+| Listo con este material | Fantasma sin peso | **Secundario** con borde y check | Cierra el material sin competir con la accion principal |
+| Listo (pieza) | Boton con texto solo | **Fantasma** con check | Accion terciaria y repetida |
+
+Reglas Kobaia aplicadas: tipografia 600, radio `--r-sm`, transicion de 150 ms,
+flecha que se desplaza `2 px` en hover, icono de acento cuando corresponde.
+
+### 8.3 Tarjetas de material (como el Card de Catalogo)
+
+- Cada material es una tarjeta con **miniatura de color** (swatch del vidrio),
+  titulo con el material, subtitulo con piezas y area, y acciones a la derecha.
+- La miniatura usa el color real del vidrio (Claro, Bronce, Verde, Negro, Espejo,
+  Gris, Azul) con un degradado sutil para dar volumen, similar a los swatches de
+  "Superficie y Paleta de Color".
+- El indice del material se muestra como una insignia pequeña sobre la miniatura.
+- Estado incompleto se comunica con icono de aviso (no solo color).
+- Encabezado compacto para que muchos materiales colapsados no generen scroll.
+
+### 8.4 Badges y campos
+
+- Los estados usan badges semanticos (`success`, `warning`, `neutral`) del sistema.
+- Los campos mantienen altura 44 px, borde hairline y foco con anillo de acento.
+- La unidad (cm) siempre visible junto al campo.
+
+### 8.5 Decisiones implementadas
+
+1. `Agregar pieza en este material` → boton **primario** grande con flecha.
+2. `Listo con este material` → boton **secundario** con check.
+3. `Listo` de pieza → boton **fantasma** con check.
+4. Tarjeta de material con **swatch de color** + insignia de indice.
+
