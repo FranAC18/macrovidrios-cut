@@ -1,11 +1,21 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 test.describe.configure({ mode: "serial" });
 
-async function login(page: import("@playwright/test").Page) {
+async function login(page: Page) {
   await page.goto("/login");
   await page.getByRole("button", { name: "Ingresar" }).click();
   await expect(page).toHaveURL(/\/dashboard/);
+}
+
+// Espera a que el select sea controlado por React (post-hidratacion) antes de continuar.
+async function selectStable(page: Page, locator: ReturnType<Page["getByLabel"]>, label: string) {
+  for (let attempt = 0; attempt < 30; attempt += 1) {
+    await locator.selectOption({ label });
+    if (await locator.inputValue()) return;
+    await page.waitForTimeout(200);
+  }
+  throw new Error(`No se pudo seleccionar ${label}`);
 }
 
 test("login demo y navegacion principal", async ({ page }) => {
@@ -27,11 +37,24 @@ test("abre el asistente de cuadre", async ({ page }) => {
   await expect(page.getByRole("button", { name: /Continuar/ })).toBeVisible();
 });
 
-test("cuadra un trabajo de corte de punta a punta", async ({ page }) => {
+test("crea un pedido y lo cuadra de punta a punta", async ({ page }) => {
   await login(page);
-  await page.goto("/cuadres/nuevo");
 
-  await page.getByRole("checkbox").first().check();
+  // Crea un pedido propio para no depender de la cola sembrada (tests repetibles).
+  await page.goto("/pedidos/nuevo", { waitUntil: "networkidle" });
+  const group = page.locator('[id^="group-"]').first();
+  await selectStable(page, group.getByLabel("Color"), "Claro");
+  await selectStable(page, group.getByLabel("Espesor"), "6 mm");
+  await group.getByLabel(/Ancho/).fill("120");
+  await group.getByLabel(/Alto/).fill("80");
+  await group.getByLabel(/Cantidad/).fill("2");
+  await page.getByRole("button", { name: /Crear pedido/ }).click();
+  await expect(page).toHaveURL(/\/pedidos\/[0-9a-f-]+/);
+  const orderNumber = (await page.getByRole("heading", { level: 1 }).innerText()).trim();
+
+  // Cuadra ese pedido puntual (identificado por su numero).
+  await page.goto("/cuadres/nuevo", { waitUntil: "networkidle" });
+  await page.locator("label", { hasText: orderNumber }).first().getByRole("checkbox").check();
   await page.getByRole("button", { name: /Continuar/ }).click();
   await expect(page.getByRole("heading", { name: "Fuente de material" })).toBeVisible();
 
