@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, ArrowRight, Check, ChevronDown, Layers, Plus, Trash2 } from "lucide-react";
+import { AlertTriangle, Check, ChevronDown, Layers, Plus, Trash2 } from "lucide-react";
 import { createOrderAction, type OrderActionState } from "@/actions/orders";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -495,11 +495,10 @@ export function OrderForm({
                       <Button
                         type="button"
                         onClick={() => addPiece(group.key)}
-                        className="group h-12 w-full gap-2 text-sm font-semibold"
+                        className="h-12 w-full gap-2 text-sm font-semibold"
                       >
                         <Plus className="h-5 w-5" />
                         Agregar pieza en este material
-                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                       </Button>
                     </div>
 

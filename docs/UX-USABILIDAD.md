@@ -192,3 +192,71 @@ flecha que se desplaza `2 px` en hover, icono de acento cuando corresponde.
 3. `Listo` de pieza → boton **fantasma** con check.
 4. Tarjeta de material con **swatch de color** + insignia de indice.
 
+## 9. Piezas no rectangulares (trapecios y formas con lados diferentes)
+
+### 9.1 Estado actual
+
+- El MVP solo corta **rectangulos**. El modelo ya contempla `geometry_type` y
+  `geometry_json` por pieza, pero hoy solo se usa `rectangle`.
+- El motor de optimizacion, la validacion geometrica y la secuencia guillotine
+  actuales asumen rectangulos.
+
+### 9.2 Que se requiere para un trapecio
+
+**Modelo de datos (por pieza):**
+
+```text
+geometry_type = "trapezoid"
+geometry_json = {
+  base_major_mm,   // lado mayor paralelo
+  base_minor_mm,   // lado menor paralelo (<= base_major)
+  height_mm,       // distancia entre bases
+  offset_mm,       // desplazamiento de la base menor respecto a la izquierda
+  rotatable
+}
+```
+
+**Interfaz (en la pieza):**
+
+- Selector de **Forma**: Rectangulo | Trapecio | (futuro) Triangulo | Forma especial.
+- Al elegir Trapecio: campos **base mayor**, **base menor**, **altura** y **desplazamiento**,
+  todos en cm, con la misma entrada asistida de medidas.
+- Vista previa a escala de la forma mientras se edita.
+
+**Validacion:**
+
+- `base_minor <= base_major`, `height > 0`, `offset` dentro del rango valido.
+- Area = `(base_major + base_minor) / 2 * height`.
+
+**Motor y produccion (el punto critico):**
+
+- Opcion A (rapida y segura): cortar por **bounding box** (el rectangulo que contiene
+  la forma). Geometria garantizada, aprovechamiento suboptimo, sin cortes diagonales.
+- Opcion B (real): nesting de trapecios por subdivision (2 triangulos + 1 rectangulo)
+  o por no-fit polygon. Requiere geometria computacional, validador propio y secuencia
+  de corte con diagonales. Es la **Fase 8** del plan.
+- La secuencia guillotine actual no aplica directo a diagonales; se necesita un
+  generador de operaciones especifico.
+
+### 9.3 Enfoque recomendado por etapas
+
+1. **Etapa 1 - Captura**: agregar forma y parametros del trapecio al pedido y a la pieza
+   (se guarda en `geometry_json`). Sin cambios en el motor.
+2. **Etapa 2 - Corte por bounding box**: el motor trata la pieza por su rectangulo
+   contenedor. Permite producir ya, con desperdicio mayor.
+3. **Etapa 3 - Nesting real**: subdivision/no-fit polygon, validador y secuencia con
+   diagonales, mas dataset de pruebas (Fase 8).
+
+### 9.4 Pregunta abierta
+
+Para avanzar hace falta confirmar con MacroVidrios:
+
+- que formas se usan de verdad (trapecio, triangulo, otras);
+- si el corte es recto (guillotine) o se permiten cortes diagonales;
+- tolerancia y orientacion permitida;
+- si el trapecio se puede rotar.
+
+Sin esa confirmacion, la Etapa 1 (captura) es segura; las etapas 2 y 3 deben validarse
+con el negocio antes de produccion.
+
+
